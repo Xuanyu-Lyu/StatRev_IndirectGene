@@ -13,6 +13,7 @@ Not ranked.
 - Tong: Modify Simulation Functions, Help with model fitting and interpretations
 - Dinka: Design Study, Propose Models, Interpret Results
 - Noemie: Design Study, Propose Models, Interpret Results
+- Richard Border: Help with simulations (depend on what types of effects we want to simulate/ also we need to go back to the bias from his simulations)
 - Matt: Captain Responsibilities
 
 ## Project Specifics
@@ -36,17 +37,18 @@ Not ranked.
 
 ### What types of indirect genetic effects do we want to simulate?
 Bottom line: we want to simulate multivariate effects, no matter what kind of effects we are going to simulate
-- Genetic Nurture as a consequence of vertical transmission
+- Genetic Nurture as a consequence of vertical transmission- different vertical transmission from mother and father. e.g., Prenatal Effects
 - Sibling Nurture
-- Horizontal Pleitropy
+- Horizontal Pleitropy (?) Go back to the issue that David Evans
 - Assortative Mating
-- Prenatal Effects
 - Environmental Effects Span Generations
-- GE interaction
+- GE interaction (possible)
+- G-E covariance caused by the active choice of parents that manifests in both parent and offspring generation
 
 ### What coding language should we use to simulate?
 Python or R. One other goal I'm anticipating for the project is to publish a package based on Gene-Evolve that is dedicated to simulating different types of indirect genetic effects. 
 - Pros for Python: Faster, Personal Growth for Xuanyu, Easier to Migrate to other projects (specifically the prediction neural network project I'm planning on).
 - Cons for Python: Limited Users in BG. We still probably need OpenMx to fit most of the model, so it would be good if the model fitting could be included in the same package in R.
-- Pros for R: We have a lot of codes available. Easier for me and tong to implement any changes.
+- Pros for R: We have a lot of codes available. It is easier for me and tong to implement any changes.
 - Cons for R: Slower.
+Matt's Opinion: Use Richard's package if he's available to implement simulations on other indirect genetic effects that have not been covered yet. 
