@@ -6,15 +6,17 @@ import pandas as pd
 import statsmodels.api as sm
 
 # read the offspring phenotype and genotype data
-df_offspring = pd.read_table("Her.5-AM.4-Lat.5-VF0-offspring.txt", sep="\t")
+df_offspring = pd.read_table("Her.5-AM.4-Lat0-VF0.15-offspring-nosib.txt", sep="\t")
 
 # extract the phenotype data
 Y_offspring = df_offspring["Y"].values
+# standardize the phenotype data
+#Y_offspring = (Y_offspring - Y_offspring.mean()) / Y_offspring.std()
 df_gene_o = df_offspring.iloc[:, 4:]
 
 # read the mother and father genotype data
-df_gene_m = pd.read_table("Her.5-AM.4-Lat.5-VF0-mother.txt", sep="\t")
-df_gene_f = pd.read_table("Her.5-AM.4-Lat.5-VF0-father.txt", sep="\t")
+df_gene_m = pd.read_table("Her.5-AM.4-Lat0-VF0.15-mother-nosib.txt", sep="\t")
+df_gene_f = pd.read_table("Her.5-AM.4-Lat0-VF0.15-father-nosib.txt", sep="\t")
 
 # standardize all columns in the genotype data to have mean 0 and variance 1
 df_gene_o_std = (df_gene_o - df_gene_o.mean()) / df_gene_o.std()
@@ -48,5 +50,6 @@ X = np.column_stack((v_R_SNP_o, v_R_SNP_p, v_R_SNP_op))
 X = sm.add_constant(X)
 model = sm.OLS(v_Y, X)
 results = model.fit()
+print("Her.5-AM0.4-Lat0-VF0.15-nosib\n")
 print(results.summary())
 
