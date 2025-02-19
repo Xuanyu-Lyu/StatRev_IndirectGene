@@ -7510,26 +7510,15 @@ a.anchor-link {
 </style>
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Connected to Python 3.9.6</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=915053d2-7f0c-4f02-9f84-9d0e07204ecd">
+<main><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=915053d2-7f0c-4f02-9f84-9d0e07204ecd">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
 <span class="c1"># author: Xuanyu Lyu</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -7542,7 +7531,7 @@ a.anchor-link {
 <span class="c1"># extract the phenotype data</span>
 <span class="n">Y_offspring</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="p">[</span><span class="s2">"Y"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="c1"># standardize the phenotype data</span>
-<span class="n">Y_offspring</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y_offspring</span> <span class="o">-</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="c1">#Y_offspring = (Y_offspring - Y_offspring.mean()) / Y_offspring.std()</span>
 <span class="n">df_gene_o</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:]</span>
 
 <span class="c1"># read the mother and father genotype data</span>
@@ -7603,18 +7592,18 @@ Dep. Variable:                      y   R-squared:                       0.003
 Model:                            OLS   Adj. R-squared:                  0.003
 Method:                 Least Squares   F-statistic:                 1.141e+04
 Date:                Tue, 18 Feb 2025   Prob (F-statistic):               0.00
-Time:                        23:15:59   Log-Likelihood:            -1.7714e+07
-No. Observations:            12497500   AIC:                         3.543e+07
-Df Residuals:                12497496   BIC:                         3.543e+07
+Time:                        23:59:40   Log-Likelihood:            -1.7982e+07
+No. Observations:            12497500   AIC:                         3.596e+07
+Df Residuals:                12497496   BIC:                         3.596e+07
 Df Model:                           3                                         
 Covariance Type:            nonrobust                                         
 ==============================================================================
                  coef    std err          t      P&gt;|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
-const      -9.635e-05      0.000     -0.341      0.733      -0.001       0.000
-x1             0.5047      0.006     89.347      0.000       0.494       0.516
+const      -9.845e-05      0.000     -0.341      0.733      -0.001       0.000
+x1             0.5156      0.006     89.347      0.000       0.504       0.527
 x2            -0.0018      0.006     -0.319      0.750      -0.013       0.009
-x3             0.0156      0.007      2.250      0.024       0.002       0.029
+x3             0.0159      0.007      2.250      0.024       0.002       0.030
 ==============================================================================
 Omnibus:                  1627339.003   Durbin-Watson:                   1.677
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):         20922723.350
@@ -7634,10 +7623,10 @@ Notes:
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
 <span class="c1"># author: Xuanyu Lyu</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -7650,7 +7639,7 @@ Notes:
 <span class="c1"># extract the phenotype data</span>
 <span class="n">Y_offspring</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="p">[</span><span class="s2">"Y"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="c1"># standardize the phenotype data</span>
-<span class="n">Y_offspring</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y_offspring</span> <span class="o">-</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="c1">#Y_offspring = (Y_offspring - Y_offspring.mean()) / Y_offspring.std()</span>
 <span class="n">df_gene_o</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:]</span>
 
 <span class="c1"># read the mother and father genotype data</span>
@@ -7711,18 +7700,18 @@ Dep. Variable:                      y   R-squared:                       0.005
 Model:                            OLS   Adj. R-squared:                  0.005
 Method:                 Least Squares   F-statistic:                 2.248e+04
 Date:                Tue, 18 Feb 2025   Prob (F-statistic):               0.00
-Time:                        23:16:34   Log-Likelihood:            -1.7697e+07
-No. Observations:            12497500   AIC:                         3.539e+07
-Df Residuals:                12497496   BIC:                         3.539e+07
+Time:                        23:59:43   Log-Likelihood:            -1.9284e+07
+No. Observations:            12497500   AIC:                         3.857e+07
+Df Residuals:                12497496   BIC:                         3.857e+07
 Df Model:                           3                                         
 Covariance Type:            nonrobust                                         
 ==============================================================================
                  coef    std err          t      P&gt;|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
-const      -5.481e-05      0.000     -0.194      0.846      -0.001       0.000
-x1             0.4279      0.006     75.972      0.000       0.417       0.439
-x2             0.0714      0.006     12.762      0.000       0.060       0.082
-x3             0.2270      0.007     32.911      0.000       0.213       0.241
+const      -6.223e-05      0.000     -0.194      0.846      -0.001       0.001
+x1             0.4858      0.006     75.972      0.000       0.473       0.498
+x2             0.0811      0.006     12.762      0.000       0.069       0.094
+x3             0.2577      0.008     32.911      0.000       0.242       0.273
 ==============================================================================
 Omnibus:                  1581573.483   Durbin-Watson:                   1.608
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):         19289493.352
@@ -7742,10 +7731,10 @@ Notes:
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
 <span class="c1"># author: Xuanyu Lyu</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -7758,7 +7747,7 @@ Notes:
 <span class="c1"># extract the phenotype data</span>
 <span class="n">Y_offspring</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="p">[</span><span class="s2">"Y"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="c1"># standardize the phenotype data</span>
-<span class="n">Y_offspring</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y_offspring</span> <span class="o">-</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="c1">#Y_offspring = (Y_offspring - Y_offspring.mean()) / Y_offspring.std()</span>
 <span class="n">df_gene_o</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:]</span>
 
 <span class="c1"># read the mother and father genotype data</span>
@@ -7819,18 +7808,18 @@ Dep. Variable:                      y   R-squared:                       0.006
 Model:                            OLS   Adj. R-squared:                  0.006
 Method:                 Least Squares   F-statistic:                     4509.
 Date:                Tue, 18 Feb 2025   Prob (F-statistic):               0.00
-Time:                        23:17:00   Log-Likelihood:            -3.3038e+06
-No. Observations:             2333880   AIC:                         6.608e+06
-Df Residuals:                 2333876   BIC:                         6.608e+06
+Time:                        23:59:44   Log-Likelihood:            -3.5936e+06
+No. Observations:             2333880   AIC:                         7.187e+06
+Df Residuals:                 2333876   BIC:                         7.187e+06
 Df Model:                           3                                         
 Covariance Type:            nonrobust                                         
 ==============================================================================
                  coef    std err          t      P&gt;|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
-const         -0.0001      0.001     -0.164      0.870      -0.001       0.001
-x1             0.4642      0.013     35.583      0.000       0.439       0.490
-x2             0.0932      0.013      7.163      0.000       0.068       0.119
-x3             0.2122      0.016     13.288      0.000       0.181       0.244
+const         -0.0001      0.001     -0.164      0.870      -0.002       0.001
+x1             0.5255      0.015     35.583      0.000       0.497       0.554
+x2             0.1056      0.015      7.163      0.000       0.077       0.134
+x3             0.2403      0.018     13.288      0.000       0.205       0.276
 ==============================================================================
 Omnibus:                   273239.517   Durbin-Watson:                   1.959
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):          2906342.362
@@ -7850,10 +7839,10 @@ Notes:
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
 <span class="c1"># author: Xuanyu Lyu</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -7866,7 +7855,7 @@ Notes:
 <span class="c1"># extract the phenotype data</span>
 <span class="n">Y_offspring</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="p">[</span><span class="s2">"Y"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="c1"># standardize the phenotype data</span>
-<span class="n">Y_offspring</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y_offspring</span> <span class="o">-</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="c1">#Y_offspring = (Y_offspring - Y_offspring.mean()) / Y_offspring.std()</span>
 <span class="n">df_gene_o</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:]</span>
 
 <span class="c1"># read the mother and father genotype data</span>
@@ -7927,18 +7916,18 @@ Dep. Variable:                      y   R-squared:                       0.001
 Model:                            OLS   Adj. R-squared:                  0.001
 Method:                 Least Squares   F-statistic:                     2618.
 Date:                Tue, 18 Feb 2025   Prob (F-statistic):               0.00
-Time:                        23:20:14   Log-Likelihood:            -1.7727e+07
-No. Observations:            12497500   AIC:                         3.545e+07
-Df Residuals:                12497496   BIC:                         3.545e+07
+Time:                        23:59:47   Log-Likelihood:            -1.9027e+07
+No. Observations:            12497500   AIC:                         3.805e+07
+Df Residuals:                12497496   BIC:                         3.805e+07
 Df Model:                           3                                         
 Covariance Type:            nonrobust                                         
 ==============================================================================
                  coef    std err          t      P&gt;|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
 const         -0.0002      0.000     -0.532      0.595      -0.001       0.000
-x1             0.1293      0.006     23.008      0.000       0.118       0.140
-x2             0.0320      0.006      5.722      0.000       0.021       0.043
-x3             0.0871      0.007     12.671      0.000       0.074       0.101
+x1             0.1434      0.006     23.008      0.000       0.131       0.156
+x2             0.0355      0.006      5.722      0.000       0.023       0.048
+x3             0.0967      0.008     12.671      0.000       0.082       0.112
 ==============================================================================
 Omnibus:                  1737925.971   Durbin-Watson:                   1.644
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):         25381853.767
@@ -7958,10 +7947,10 @@ Notes:
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
 <span class="c1"># author: Xuanyu Lyu</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -7974,7 +7963,7 @@ Notes:
 <span class="c1"># extract the phenotype data</span>
 <span class="n">Y_offspring</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="p">[</span><span class="s2">"Y"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="c1"># standardize the phenotype data</span>
-<span class="n">Y_offspring</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y_offspring</span> <span class="o">-</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="c1">#Y_offspring = (Y_offspring - Y_offspring.mean()) / Y_offspring.std()</span>
 <span class="n">df_gene_o</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:]</span>
 
 <span class="c1"># read the mother and father genotype data</span>
@@ -8035,18 +8024,18 @@ Dep. Variable:                      y   R-squared:                       0.000
 Model:                            OLS   Adj. R-squared:                  0.000
 Method:                 Least Squares   F-statistic:                     362.1
 Date:                Tue, 18 Feb 2025   Prob (F-statistic):          4.09e-235
-Time:                        23:21:55   Log-Likelihood:            -3.3685e+06
-No. Observations:             2375110   AIC:                         6.737e+06
-Df Residuals:                 2375106   BIC:                         6.737e+06
+Time:                        23:59:48   Log-Likelihood:            -3.7435e+06
+No. Observations:             2375110   AIC:                         7.487e+06
+Df Residuals:                 2375106   BIC:                         7.487e+06
 Df Model:                           3                                         
 Covariance Type:            nonrobust                                         
 ==============================================================================
                  coef    std err          t      P&gt;|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
 const         -0.0004      0.001     -0.558      0.577      -0.002       0.001
-x1             0.0993      0.013      7.633      0.000       0.074       0.125
-x2             0.0303      0.013      2.333      0.020       0.005       0.056
-x3             0.0825      0.016      5.185      0.000       0.051       0.114
+x1             0.1162      0.015      7.633      0.000       0.086       0.146
+x2             0.0354      0.015      2.333      0.020       0.006       0.065
+x3             0.0966      0.019      5.185      0.000       0.060       0.133
 ==============================================================================
 Omnibus:                   303351.710   Durbin-Watson:                   1.988
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):          3762063.407
@@ -8066,10 +8055,10 @@ Notes:
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
 <span class="c1"># author: Xuanyu Lyu</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -8082,7 +8071,7 @@ Notes:
 <span class="c1"># extract the phenotype data</span>
 <span class="n">Y_offspring</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="p">[</span><span class="s2">"Y"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="c1"># standardize the phenotype data</span>
-<span class="n">Y_offspring</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y_offspring</span> <span class="o">-</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="c1">#Y_offspring = (Y_offspring - Y_offspring.mean()) / Y_offspring.std()</span>
 <span class="n">df_gene_o</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:]</span>
 
 <span class="c1"># read the mother and father genotype data</span>
@@ -8143,18 +8132,18 @@ Dep. Variable:                      y   R-squared:                       0.019
 Model:                            OLS   Adj. R-squared:                  0.019
 Method:                 Least Squares   F-statistic:                 8.154e+04
 Date:                Tue, 18 Feb 2025   Prob (F-statistic):               0.00
-Time:                        23:25:49   Log-Likelihood:            -1.7610e+07
-No. Observations:            12497500   AIC:                         3.522e+07
-Df Residuals:                12497496   BIC:                         3.522e+07
+Time:                        23:59:50   Log-Likelihood:            -2.8462e+07
+No. Observations:            12497500   AIC:                         5.692e+07
+Df Residuals:                12497496   BIC:                         5.692e+07
 Df Model:                           3                                         
 Covariance Type:            nonrobust                                         
 ==============================================================================
                  coef    std err          t      P&gt;|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
-const       7.038e-05      0.000      0.251      0.802      -0.000       0.001
-x1             0.1950      0.006     34.672      0.000       0.184       0.206
-x2             0.6572      0.006    117.700      0.000       0.646       0.668
-x3             0.4990      0.007     72.399      0.000       0.485       0.513
+const          0.0002      0.001      0.251      0.802      -0.001       0.001
+x1             0.4646      0.013     34.672      0.000       0.438       0.491
+x2             1.5661      0.013    117.700      0.000       1.540       1.592
+x3             1.1891      0.016     72.399      0.000       1.157       1.221
 ==============================================================================
 Omnibus:                  1507036.555   Durbin-Watson:                   1.139
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):         16864938.122
@@ -8174,10 +8163,10 @@ Notes:
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-python"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># This is a script to conduct RDR model on simulated data from Gene-Evolve.</span>
 <span class="c1"># author: Xuanyu Lyu</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -8190,7 +8179,7 @@ Notes:
 <span class="c1"># extract the phenotype data</span>
 <span class="n">Y_offspring</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="p">[</span><span class="s2">"Y"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="c1"># standardize the phenotype data</span>
-<span class="n">Y_offspring</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y_offspring</span> <span class="o">-</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">Y_offspring</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="c1">#Y_offspring = (Y_offspring - Y_offspring.mean()) / Y_offspring.std()</span>
 <span class="n">df_gene_o</span> <span class="o">=</span> <span class="n">df_offspring</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:]</span>
 
 <span class="c1"># read the mother and father genotype data</span>
@@ -8251,18 +8240,18 @@ Dep. Variable:                      y   R-squared:                       0.020
 Model:                            OLS   Adj. R-squared:                  0.020
 Method:                 Least Squares   F-statistic:                 1.551e+04
 Date:                Tue, 18 Feb 2025   Prob (F-statistic):               0.00
-Time:                        23:36:47   Log-Likelihood:            -3.2295e+06
-No. Observations:             2293011   AIC:                         6.459e+06
-Df Residuals:                 2293007   BIC:                         6.459e+06
+Time:                        23:59:51   Log-Likelihood:            -5.2130e+06
+No. Observations:             2293011   AIC:                         1.043e+07
+Df Residuals:                 2293007   BIC:                         1.043e+07
 Df Model:                           3                                         
 Covariance Type:            nonrobust                                         
 ==============================================================================
                  coef    std err          t      P&gt;|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
-const          0.0002      0.001      0.277      0.781      -0.001       0.001
-x1             0.1822      0.013     13.906      0.000       0.156       0.208
-x2             0.6651      0.013     50.901      0.000       0.639       0.691
-x3             0.5409      0.016     33.714      0.000       0.509       0.572
+const          0.0004      0.002      0.277      0.781      -0.003       0.003
+x1             0.4327      0.031     13.906      0.000       0.372       0.494
+x2             1.5796      0.031     50.901      0.000       1.519       1.640
+x3             1.2848      0.038     33.714      0.000       1.210       1.359
 ==============================================================================
 Omnibus:                   306129.113   Durbin-Watson:                   2.031
 Prob(Omnibus):                  0.000   Jarque-Bera (JB):          4126185.961
