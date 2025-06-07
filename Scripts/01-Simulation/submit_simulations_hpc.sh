@@ -4,8 +4,8 @@
 #SBATCH --nodes=1                       # Each task requires 1 node
 #SBATCH --ntasks=1                      # Each task is 1 main Python process
 #SBATCH --cpus-per-task=10              # <<< Request 10 CPUs for each task
-#SBATCH --mem=32G                       # <<< Increased memory for running 10 sims at once
-#SBATCH --time=08:00:00               # <<< Increased time limit for running 10 sims
+#SBATCH --mem=40G                       # <<< Increased memory for running 10 sims at once
+#SBATCH --time=16:00:00               # <<< Increased time limit for running 10 sims
 #SBATCH --chdir /projects/xuly4739/Py_Projects/StatRev_IndirectGene/Scripts/01-Simulation
 #SBATCH --exclude bmem-rico1
 #SBATCH -o %x.out%A
@@ -17,7 +17,7 @@
 # This is now (total replications) / (replications per task)
 # (2 conditions * 100 reps/condition) / 10 reps/task = 20 tasks
 # So the array will be indexed 1-20.
-#SBATCH --array=1-2
+#SBATCH --array=1-20
 
 # --- Your Job's Commands ---
 

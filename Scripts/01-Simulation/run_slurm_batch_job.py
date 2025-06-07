@@ -83,7 +83,7 @@ def main():
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     main_output_directory = f"/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/simulation_batch_{timestamp}"
     
-    REPLICATIONS_PER_CONDITION = 30 
+    REPLICATIONS_PER_CONDITION = 300 
     REPLICATIONS_PER_SLURM_TASK = 15
 
     # --- 2. Define Simulation Conditions ---
