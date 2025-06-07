@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=10              # <<< Request 10 CPUs for each task
 #SBATCH --mem=32G                       # <<< Increased memory for running 10 sims at once
 #SBATCH --time=08:00:00               # <<< Increased time limit for running 10 sims
-#SBATCH --chdir /projects/xuly4739/Py_Projects/StatRev_IndirectGene
+#SBATCH --chdir /projects/xuly4739/Py_Projects/StatRev_IndirectGene/Scripts/01-Simulation
 #SBATCH --exclude bmem-rico1
 #SBATCH -o %x.out%A
 #SBATCH -e %x.err%A
