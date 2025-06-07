@@ -52,3 +52,7 @@ Python or R. One other goal I'm anticipating for the project is to publish a pac
 - Pros for R: We have a lot of codes available. It is easier for me and tong to implement any changes.
 - Cons for R: Slower.
 Matt's Opinion: Use Richard's package if he's available to implement simulations on other indirect genetic effects that have not been covered yet. 
+
+
+### Analysis plan
+1. Two different conditions: Both phenotypic AM. One with only phenotypic vertical transmission and one with both phenotypic and F transmission

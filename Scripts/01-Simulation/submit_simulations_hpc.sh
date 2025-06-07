@@ -1,12 +1,17 @@
 #!/bin/bash
+#SBATCH --qos=preemptable
 #SBATCH --job-name=sim_batch_hpc        # A name for your job
-#SBATCH --output=slurm_logs/sim_run_%A_%a.out  # Path to write stdout, %A is job ID, %a is array task ID
-#SBATCH --error=slurm_logs/sim_run_%A_%a.err   # Path to write stderr
 #SBATCH --nodes=1                       # Each task requires 1 node
 #SBATCH --ntasks=1                      # Each task is 1 main Python process
 #SBATCH --cpus-per-task=10              # <<< Request 10 CPUs for each task
-#SBATCH --mem=16G                       # <<< Increased memory for running 10 sims at once
-#SBATCH --time=0-08:00:00               # <<< Increased time limit for running 10 sims
+#SBATCH --mem=32G                       # <<< Increased memory for running 10 sims at once
+#SBATCH --time=08:00:00               # <<< Increased time limit for running 10 sims
+#SBATCH --chdir /projects/xuly4739/R-Projects/StatRev_IndirectGene
+#SBATCH --exclude bmem-rico1
+#SBATCH -o %x.out%A
+#SBATCH -e %x.err%A
+
+
 
 # --- Define the total number of tasks for the array ---
 # This is now (total replications) / (replications per task)
@@ -29,7 +34,8 @@ echo "Running on host: $(hostname)"
 echo "------------------------------------------------"
 
 # Load necessary modules for your environment (e.g., Python)
-# module load python/3.9
+source /curc/sw/anaconda3/latest
+conda activate /projects/xuly4739/general_env
 
 # Activate your Python virtual environment if you have one
 # source /path/to/your/virtual/environment/bin/activate
