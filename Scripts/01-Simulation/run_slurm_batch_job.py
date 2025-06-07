@@ -1,0 +1,168 @@
+# File: run_slurm_batch_job.py
+
+import os
+import sys
+import multiprocessing
+import datetime
+import numpy as np
+import pandas as pd
+
+# Import the necessary class and functions from your other files
+try:
+    from SimulationFunctions import AssortativeMatingSimulation
+    from save_simulation_data import save_simulation_results
+except ImportError as e:
+    print(f"Error: Could not import necessary components. {e}")
+    print("Please ensure SimulationFunctions.py and save_simulation_data.py are in the same directory.")
+    sys.exit(1)
+
+def run_single_replication(task_params):
+    """
+    A worker function for the multiprocessing Pool.
+    It runs ONE full simulation replication from start to finish and saves the results.
+    This function is nearly identical to the one in the previous Slurm script.
+
+    Args:
+        task_params (dict): A dictionary containing all parameters for a single replication.
+    """
+    try:
+        # Unpack parameters for this specific replication
+        replication_id = task_params['replication_id']
+        condition_name = task_params['condition_name']
+        base_output_folder = task_params['base_output_folder']
+        
+        # Create a unique folder for this specific replication run
+        run_folder_name = f"{condition_name}_run_{replication_id:03d}"
+        run_output_folder = os.path.join(base_output_folder, run_folder_name)
+        
+        # Define a unique filename for the summary text file for this run
+        summary_txt_filename = os.path.join(run_output_folder, "run_summary.txt")
+
+        # Create a unique, reproducible seed for each replication
+        run_seed = task_params['simulation_params']['seed'] + replication_id
+        
+        # Update simulation parameters with the unique seed and summary filename
+        sim_params = task_params['simulation_params'].copy()
+        sim_params['seed'] = run_seed
+        sim_params['output_summary_filename'] = summary_txt_filename
+
+        print(f"  -> Starting replication: {run_folder_name} with seed {run_seed}")
+        
+        # --- Instantiate and Run Simulation ---
+        sim_instance = AssortativeMatingSimulation(**sim_params)
+        results = sim_instance.run_simulation()
+        
+        # --- Save All Results ---
+        if results:
+            save_simulation_results(
+                results=results, 
+                output_folder=run_output_folder, 
+                file_prefix=run_folder_name,
+                scope="all"
+            )
+        
+        print(f"  -> Finished replication: {run_folder_name}")
+        return f"Success: {run_folder_name}"
+
+    except Exception as e:
+        run_folder_name = task_params.get('condition_name', 'unknown') + '_run_' + str(task_params.get('replication_id', 'unknown'))
+        error_message = f"Failed: {run_folder_name} with error: {e}"
+        print(f"!!! ERROR in {run_folder_name} !!!")
+        import traceback
+        traceback.print_exc()
+        return error_message
+
+
+def main():
+    """
+    Main function to define conditions and map a Slurm task ID to a BATCH of replications.
+    """
+    # --- 1. Main Configuration ---
+    
+    # Define a base output folder for this entire batch of simulations
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    main_output_directory = f"simulation_batch_{timestamp}"
+    
+    REPLICATIONS_PER_CONDITION = 100 
+    REPLICATIONS_PER_SLURM_TASK = 10
+
+    # --- 2. Define Simulation Conditions ---
+    # Each dictionary in this list is a separate experimental condition.
+    base_params = {
+        "num_generations": 5, "pop_size": 200, "n_CV": 50, "rg_effects": 0.4,
+        "maf_min": 0.05, "maf_max": 0.45, "avoid_inbreeding": True,
+        "save_each_gen": True, "save_covs": False, "summary_file_scope": "all",
+        "seed": 202506 
+    }
+    k2_val = np.array([[1.0, base_params["rg_effects"]], [base_params["rg_effects"], 1.0]])
+    d_mat_val = np.diag([np.sqrt(0.3), np.sqrt(0.3)]); a_mat_val = np.diag([np.sqrt(0.2), np.sqrt(0.2)])
+    fmat_val = np.diag([np.sqrt(0.15), np.sqrt(0.15)]); s_mat_val = np.diag([np.sqrt(0.075), np.sqrt(0.075)])
+    cove_val = np.array([[0.2, 0.05], [0.05, 0.2]]); covy_val = np.array([[1.0, 0.25], [0.25, 1.0]])
+    am_list_val = [np.array([[0.1, 0.05], [0.05, 0.1]])] * base_params["num_generations"]
+    base_params.update({
+        "k2_matrix": k2_val, "d_mat": d_mat_val, "a_mat": a_mat_val, "f_mat": fmat_val, 
+        "s_mat": s_mat_val, "cove_mat": cove_val, "covy_mat": covy_val, "am_list": am_list_val
+    })
+    
+    simulation_conditions = [
+        {"condition_name": "phenotypic_assortment", "simulation_params": {**base_params, "mating_type": "phenotypic"}},
+        {"condition_name": "social_assortment", "simulation_params": {**base_params, "mating_type": "social"}},
+    ]
+
+    # --- 3. Determine Which Batch This Slurm Task Will Run ---
+    try:
+        # Slurm provides a 1-based task ID.
+        task_id = int(os.environ.get('SLURM_ARRAY_TASK_ID', 1))
+        # Determine number of CPUs allocated to this task by Slurm
+        num_cpus = int(os.environ.get('SLURM_CPUS_PER_TASK', 1))
+    except (ValueError, TypeError) as e:
+        print(f"Could not read Slurm environment variables. Defaulting to task_id=1, cpus=1. Error: {e}")
+        task_id = 1
+        num_cpus = 1
+        
+    # Total number of tasks per condition
+    num_tasks_per_condition = REPLICATIONS_PER_CONDITION // REPLICATIONS_PER_SLURM_TASK
+
+    # Determine which condition and which block of replications this task handles
+    condition_index = (task_id - 1) // num_tasks_per_condition
+    block_index = (task_id - 1) % num_tasks_per_condition
+    
+    start_replication_id = block_index * REPLICATIONS_PER_SLURM_TASK + 1
+    end_replication_id = start_replication_id + REPLICATIONS_PER_SLURM_TASK - 1
+    
+    if condition_index >= len(simulation_conditions):
+        print(f"Error: Task ID {task_id} is out of bounds for the defined conditions. Exiting.")
+        sys.exit(1)
+
+    current_condition = simulation_conditions[condition_index]
+
+    # --- 4. Generate the List of 10 Tasks for This Slurm Job ---
+    tasks_for_this_job = []
+    for i in range(start_replication_id, end_replication_id + 1):
+        task = {
+            "replication_id": i,
+            "condition_name": current_condition["condition_name"],
+            "base_output_folder": main_output_directory,
+            "simulation_params": current_condition["simulation_params"]
+        }
+        tasks_for_this_job.append(task)
+    
+    print(f"--- Slurm Task {task_id} Configuration ---")
+    print(f"Main output directory: {main_output_directory}")
+    print(f"Condition: {current_condition['condition_name']}")
+    print(f"Running replications: {start_replication_id} through {end_replication_id}")
+    print(f"Using {num_cpus} CPUs for parallel processing within this task.")
+    
+    # Create the main output directory if it doesn't exist
+    # All tasks will try to create it, which is fine.
+    os.makedirs(main_output_directory, exist_ok=True)
+
+    # --- 5. Run the Batch of 10 Simulations in Parallel using multiprocessing ---
+    with multiprocessing.Pool(processes=num_cpus) as pool:
+        pool.map(run_single_replication, tasks_for_this_job)
+
+    print(f"--- Slurm Task {task_id} Finished ---")
+
+
+if __name__ == '__main__':
+    main()

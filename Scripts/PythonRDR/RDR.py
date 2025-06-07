@@ -20,6 +20,8 @@ df_gene_o = df_offspring.iloc[:, 4:]
 df_gene_m = pd.read_table("Her.5-AM.4-Lat0-VF0.15-mother-nosib.txt", sep="\t")
 df_gene_f = pd.read_table("Her.5-AM.4-Lat0-VF0.15-father-nosib.txt", sep="\t")
 
+# filter out the individuals that are missing
+
 # standardize all columns in the genotype data to have mean 0 and variance 1
 df_gene_o_std = (df_gene_o - df_gene_o.mean()) / df_gene_o.std()
 

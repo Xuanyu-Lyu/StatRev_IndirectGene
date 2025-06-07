@@ -1,0 +1,98 @@
+--- Simulation Summary Output ---
+Timestamp: 2025-05-31 15:46:50
+Output File: test_save.txt
+
+--- Simulation Setup Parameters ---
+Total Generations Simulated: 6 (0 to 5)
+Initial Population Size: 1000
+Mating Type: phenotypic
+Avoid Inbreeding: True
+Seed: 12345
+Number of CVs: 60
+rg (effects for CVs): 0.2
+MAF Range: 0.01 - 0.49 (uniform)
+
+--- Key Model Matrices (Initial Values) ---
+k2_matrix (Initial Var(Raw Genetic Values AO, AL)): 
+[[1.  0.2]
+ [0.2 1. ]]
+d_mat (AO_raw -> AO_std): 
+[[0.54772256 0.        ]
+ [0.         0.54772256]]
+a_mat (AL_raw -> AL_std): 
+[[0.4472136 0.       ]
+ [0.        0.4472136]]
+f_mat (Parental Y -> Offspring F): 
+[[0.15 0.1 ]
+ [0.05 0.1 ]]
+s_mat (Parental F+E -> Offspring F): 
+[[0.38729833 0.        ]
+ [0.         0.38729833]]
+cove_mat (Var(Offspring E)): 
+[[0.2  0.05]
+ [0.05 0.2 ]]
+covy_mat (Target Var(Y) at t0 / for F gen): 
+[[1.   0.25]
+ [0.25 1.  ]]
+am_list (mu for Gen0 parents): 
+[[0.4  0.1 ]
+ [0.05 0.3 ]]
+
+--- Final Generation (5) Summary ---
+Population Size: 1000
+
+Variance Components (for Y-scaled values):
+  VAO: 
+[[0.3335, 0.0433],
+ [0.0433, 0.2771]]
+  VAL: 
+[[0.2509, 0.0173],
+ [0.0173, 0.1753]]
+  VF: 
+[[0.7381, 0.4220],
+ [0.4220, 0.3743]]
+  VE: 
+[[0.2092, 0.0386],
+ [0.0386, 0.1917]]
+  VP: 
+[[1.9750, 0.7443],
+ [0.7443, 1.2696]]
+
+Heritabilities:
+  h2 (Trait1, Trait2): (0.2959, 0.3563)
+  h2.obs (Trait1, Trait2): (0.1689, 0.2183)
+  h2.lat (Trait1, Trait2): (0.1271, 0.1380)
+
+Key Covariance Matrices from Final Generation:
+  covG: 
+[[ 0.0339, -0.0073],
+ [-0.0073, -0.0193]]
+  covH: 
+[[ 0.0579, -0.0198],
+ [-0.0198, -0.0244]]
+  omega: 
+[[0.3994, 0.1422],
+ [0.0919, 0.2863]]
+  gamma: 
+[[0.3800, 0.0005],
+ [0.0888, 0.1675]]
+  w: 
+[[0.2280, 0.2184],
+ [0.1067, 0.1862]]
+  v: 
+[[0.2258, 0.0205],
+ [0.1040, 0.0280]]
+  covF: 
+[[0.7381, 0.4220],
+ [0.4220, 0.3743]]
+  covE: 
+[[0.2092, 0.0386],
+ [0.0386, 0.1917]]
+  thetaNT: 
+[[0.3207, 0.1660],
+ [0.1320, 0.0759]]
+  thetaT: 
+[[0.8432, 0.2769],
+ [0.1718, 0.6691]]
+
+--- End of Summary ---
