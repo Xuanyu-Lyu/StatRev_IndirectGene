@@ -1,7 +1,10 @@
 *.tsv
 *.rds
 *.Rdata
-
+# add slurm output files
+*.out
+*.log
+*.ERR
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
