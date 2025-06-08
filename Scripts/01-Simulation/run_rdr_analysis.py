@@ -119,8 +119,8 @@ def main():
     Main function to define processing configuration and run tasks sequentially.
     """
     # --- 1. Configuration ---
-    SOURCE_DATA_DIR = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/TestRc2"
-    DESTINATION_DIR = "/projects/xuly4739/R-Projects/BiSEMPGS/BiSEMPGS/Data/Paper/"
+    SOURCE_DATA_DIR = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Preliminary"
+    DESTINATION_DIR = "/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results"
     CONDITIONS_TO_PROCESS = ["phenotypic_transmission", "social_transmission"]
     TRAITS_TO_ANALYZE = ["Y1", "Y2"]
 
