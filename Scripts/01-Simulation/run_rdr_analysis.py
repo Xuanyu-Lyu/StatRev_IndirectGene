@@ -1,17 +1,6 @@
-# File: run_rdr_analysis.py
+# In run_rdr_analysis.py
 
-import os
-import sys
-import glob
-import multiprocessing
-import pandas as pd
-import numpy as np
-from scipy.optimize import minimize
-
-def _ensure_folder_exists(folder_path):
-    """Helper function to create a folder if it doesn't exist."""
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
+# ... (imports and other functions remain the same) ...
 
 def run_rdr_on_replication(task_params):
     """
@@ -24,12 +13,21 @@ def run_rdr_on_replication(task_params):
     Returns:
         dict: A dictionary containing the estimated parameters and standard errors.
     """
+    # --- MODIFICATION START ---
+    # Unpack ALL necessary parameters at the top
     run_folder_path = task_params['run_folder_path']
-    trait_to_analyze = task_params['trait'] # *** NEW: Get the trait to analyze ***
+    trait_to_analyze = task_params['trait']
+    condition_name = task_params['condition_name'] # <-- This was the missing line
+    
     replication_id = int(os.path.basename(run_folder_path).split('_')[-1])
     
-    # Create a base result dictionary for returning info even on error
-    base_result = {'replication': replication_id, 'trait': trait_to_analyze}
+    # Create a base result dictionary that now INCLUDES the condition_name
+    base_result = {
+        'replication': replication_id, 
+        'trait': trait_to_analyze,
+        'condition_name': condition_name # <-- Add it to the base result for all return paths
+    }
+    # --- MODIFICATION END ---
 
     try:
         # --- 1. Find and Load Data ---
@@ -48,10 +46,8 @@ def run_rdr_on_replication(task_params):
         df_gene_o = pd.read_csv(xo_filepath, sep='\t')
         
         # --- 2. Prepare Data and Matrices ---
-        # *** MODIFICATION: Use the specified trait_to_analyze ***
         Y_offspring = df_phen_offspring[trait_to_analyze].values 
         
-        # Find parent data from the previous generation
         parent_gen_num = final_gen_num - 1
         parent_phen_filepath = [f for f in glob.glob(os.path.join(run_folder_path, "*_phen_gen*.tsv")) if f"gen{parent_gen_num}.tsv" in f]
         if not parent_phen_filepath:
@@ -109,86 +105,10 @@ def run_rdr_on_replication(task_params):
                 'se_v_e_g': np.exp(p_hat[2]) * se_log_params[2], 'se_c_g_e': np.exp(p_hat[3]) * se_log_params[3],
                 'se_sigma2': np.exp(p_hat[4]) * se_log_params[4]
             }
+            # All return paths now correctly include the base_result dictionary
             return {**base_result, 'status': 'success', **estimates, **ses}
         else:
             return {**base_result, 'status': 'failed', 'error': res.message}
 
     except Exception as e:
         return {**base_result, 'status': 'error', 'error': str(e)}
-
-def build_Sigma(params, R_snp, R_par, R_op):
-    mu, alpha_g, alpha_e_g, alpha_g_e, alpha_sig = params
-    v_g, v_e_g, c_g_e, sig2 = np.exp(alpha_g), np.exp(alpha_e_g), np.exp(alpha_g_e), np.exp(alpha_sig)
-    Sigma = v_g * R_snp + v_e_g * R_par + c_g_e * R_op + sig2 * np.eye(R_snp.shape[0])
-    return Sigma, mu
-
-def neg_log_lik(params, y, R_snp, R_par, R_op):
-    n = len(y)
-    Sigma, mu = build_Sigma(params, R_snp, R_par, R_op)
-    ym = y - mu
-    try:
-        sign, logdet = np.linalg.slogdet(Sigma)
-        if sign <= 0: return 1e12
-        invSy = np.linalg.solve(Sigma, ym)
-        quadform = ym.dot(invSy)
-        nll = 0.5 * (n * np.log(2 * np.pi) + logdet + quadform)
-        return nll if np.isfinite(nll) else 1e12
-    except np.linalg.LinAlgError:
-        return 1e12
-
-def main():
-    # --- 1. Configuration ---
-    SOURCE_DATA_DIR = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Preliminary" # Make sure this points to the right batch folder
-    DESTINATION_DIR = "/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results"
-    CONDITIONS_TO_PROCESS = ["phenotypic_transmission", "social_transmission"]
-    TRAITS_TO_ANALYZE = ["Y1", "Y2"] # *** NEW: Specify traits to analyze ***
-    NUM_PROCESSES = int(os.environ.get('SLURM_CPUS_PER_TASK', 10))
-
-    # --- 2. Generate Task List for All Replications and Traits ---
-    tasks = []
-    print("--- Preparing RDR Analysis Tasks ---")
-    for condition in CONDITIONS_TO_PROCESS:
-        condition_source_path = os.path.join(SOURCE_DATA_DIR, condition)
-        if not os.path.isdir(condition_source_path):
-            print(f"Warning: Source directory for condition '{condition}' not found. Skipping.")
-            continue
-            
-        run_folders = glob.glob(os.path.join(condition_source_path, "run_*"))
-        
-        for run_folder in run_folders:
-            # *** MODIFICATION: Create a task for each trait ***
-            for trait in TRAITS_TO_ANALYZE:
-                tasks.append({
-                    'run_folder_path': run_folder,
-                    'condition_name': condition,
-                    'trait': trait
-                })
-
-    if not tasks:
-        print("No tasks to run. Check source directory."); return
-
-    print(f"Total analysis tasks to run: {len(tasks)} ({len(tasks)//len(TRAITS_TO_ANALYZE)} replications x {len(TRAITS_TO_ANALYZE)} traits)")
-    print(f"Using {NUM_PROCESSES} parallel processes.")
-
-    # --- 3. Run All Tasks in Parallel ---
-    with multiprocessing.Pool(processes=NUM_PROCESSES) as pool:
-        results_list = pool.map(run_rdr_on_replication, tasks)
-
-    # --- 4. Aggregate and Save Results ---
-    print("\n--- Aggregating and Saving Results ---")
-    full_results_df = pd.DataFrame(results_list)
-    
-    _ensure_folder_exists(DESTINATION_DIR)
-    
-    # The output file will now contain results for both traits,
-    # grouped by condition and sorted by replication and trait.
-    for condition_name, group_df in full_results_df.groupby('condition_name'):
-        output_filename = os.path.join(DESTINATION_DIR, f"RDR_results_{condition_name}_both_traits.txt")
-        group_df.sort_values(by=['replication', 'trait'], inplace=True)
-        group_df.to_csv(output_filename, sep='\t', index=False)
-        print(f"Saved results for condition '{condition_name}' to: {output_filename}")
-
-    print("\n--- All Processing Complete ---")
-
-if __name__ == '__main__':
-    main()
