@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --qos=preemptable
 #SBATCH --job-name=rdr_analysis_bivar   # A name for your job
-
+#SBATCH --nodes=1
 #SBATCH --ntasks=1                        # This script is 1 main process
 #SBATCH --cpus-per-task=1  
 #SBATCH --mem=200G                         # Memory for loading and processing data
@@ -25,7 +25,10 @@ echo "Running on host: $(hostname)"
 echo "CPUs available to this job: $SLURM_CPUS_PER_TASK"
 echo "------------------------------------------------"
 
-
+echo "Forcing libraries to be single-threaded..."
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
 
 # Run your new Python processing script
 python run_rdr_analysis.py
