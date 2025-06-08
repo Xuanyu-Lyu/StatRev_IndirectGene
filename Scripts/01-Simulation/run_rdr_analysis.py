@@ -111,7 +111,6 @@ def neg_log_lik(params, y, R_snp, R_par, R_op):
     except np.linalg.LinAlgError:
         return 1e12
 
-# *** MODIFIED MAIN FUNCTION ***
 def main():
     """
     Main function to define processing configuration and run tasks sequentially.
@@ -182,5 +181,6 @@ def main():
     print("\n--- All Processing Complete ---")
 
 
+# This block ensures that the main function is executed only when the script is run directly.
 if __name__ == '__main__':
     main()

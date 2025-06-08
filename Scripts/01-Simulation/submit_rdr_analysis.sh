@@ -3,6 +3,7 @@
 #SBATCH --job-name=rdr_analysis_bivar   # A name for your job
 #SBATCH --nodes=1                         # Request 1 node
 #SBATCH --ntasks=1                        # This script is 1 main process
+#SBATCH --cpus-per-task=1  
 #SBATCH --mem=200G                         # Memory for loading and processing data
 #SBATCH --time=0-06:00:00                 # *** MODIFIED: Increased time for running both traits ***
 #SBATCH --chdir /projects/xuly4739/Py_Projects/StatRev_IndirectGene/Scripts/01-Simulation
