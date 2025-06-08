@@ -1,3 +1,18 @@
+# File: run_rdr_analysis.py
+
+import os
+import sys
+import glob
+import multiprocessing
+import pandas as pd
+import numpy as np
+from scipy.optimize import minimize
+
+def _ensure_folder_exists(folder_path):
+    """Helper function to create a folder if it doesn't exist."""
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
 # In run_rdr_analysis.py
 
 # ... (imports and other functions remain the same) ...
@@ -112,3 +127,80 @@ def run_rdr_on_replication(task_params):
 
     except Exception as e:
         return {**base_result, 'status': 'error', 'error': str(e)}
+
+def build_Sigma(params, R_snp, R_par, R_op):
+    mu, alpha_g, alpha_e_g, alpha_g_e, alpha_sig = params
+    v_g, v_e_g, c_g_e, sig2 = np.exp(alpha_g), np.exp(alpha_e_g), np.exp(alpha_g_e), np.exp(alpha_sig)
+    Sigma = v_g * R_snp + v_e_g * R_par + c_g_e * R_op + sig2 * np.eye(R_snp.shape[0])
+    return Sigma, mu
+
+def neg_log_lik(params, y, R_snp, R_par, R_op):
+    n = len(y)
+    Sigma, mu = build_Sigma(params, R_snp, R_par, R_op)
+    ym = y - mu
+    try:
+        sign, logdet = np.linalg.slogdet(Sigma)
+        if sign <= 0: return 1e12
+        invSy = np.linalg.solve(Sigma, ym)
+        quadform = ym.dot(invSy)
+        nll = 0.5 * (n * np.log(2 * np.pi) + logdet + quadform)
+        return nll if np.isfinite(nll) else 1e12
+    except np.linalg.LinAlgError:
+        return 1e12
+
+def main():
+    # --- 1. Configuration ---
+    SOURCE_DATA_DIR = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Preliminary" # Make sure this points to the right batch folder
+    DESTINATION_DIR = "/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results"
+    CONDITIONS_TO_PROCESS = ["phenotypic_transmission", "social_transmission"]
+    TRAITS_TO_ANALYZE = ["Y1", "Y2"] # *** NEW: Specify traits to analyze ***
+    NUM_PROCESSES = int(os.environ.get('SLURM_CPUS_PER_TASK', 10))
+
+    # --- 2. Generate Task List for All Replications and Traits ---
+    tasks = []
+    print("--- Preparing RDR Analysis Tasks ---")
+    for condition in CONDITIONS_TO_PROCESS:
+        condition_source_path = os.path.join(SOURCE_DATA_DIR, condition)
+        if not os.path.isdir(condition_source_path):
+            print(f"Warning: Source directory for condition '{condition}' not found. Skipping.")
+            continue
+            
+        run_folders = glob.glob(os.path.join(condition_source_path, "run_*"))
+        
+        for run_folder in run_folders:
+            # *** MODIFICATION: Create a task for each trait ***
+            for trait in TRAITS_TO_ANALYZE:
+                tasks.append({
+                    'run_folder_path': run_folder,
+                    'condition_name': condition,
+                    'trait': trait
+                })
+
+    if not tasks:
+        print("No tasks to run. Check source directory."); return
+
+    print(f"Total analysis tasks to run: {len(tasks)} ({len(tasks)//len(TRAITS_TO_ANALYZE)} replications x {len(TRAITS_TO_ANALYZE)} traits)")
+    print(f"Using {NUM_PROCESSES} parallel processes.")
+
+    # --- 3. Run All Tasks in Parallel ---
+    with multiprocessing.Pool(processes=NUM_PROCESSES) as pool:
+        results_list = pool.map(run_rdr_on_replication, tasks)
+
+    # --- 4. Aggregate and Save Results ---
+    print("\n--- Aggregating and Saving Results ---")
+    full_results_df = pd.DataFrame(results_list)
+    
+    _ensure_folder_exists(DESTINATION_DIR)
+    
+    # The output file will now contain results for both traits,
+    # grouped by condition and sorted by replication and trait.
+    for condition_name, group_df in full_results_df.groupby('condition_name'):
+        output_filename = os.path.join(DESTINATION_DIR, f"RDR_results_{condition_name}_both_traits.txt")
+        group_df.sort_values(by=['replication', 'trait'], inplace=True)
+        group_df.to_csv(output_filename, sep='\t', index=False)
+        print(f"Saved results for condition '{condition_name}' to: {output_filename}")
+
+    print("\n--- All Processing Complete ---")
+
+if __name__ == '__main__':
+    main()
