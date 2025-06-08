@@ -94,10 +94,10 @@ def main():
     
     # Define a base output folder for this entire batch of simulations
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    main_output_directory = f"/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/TestRc2"
+    main_output_directory = f"/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Preliminary"
     
     REPLICATIONS_PER_CONDITION = 100 
-    REPLICATIONS_PER_SLURM_TASK = 10
+    REPLICATIONS_PER_SLURM_TASK = 5
 
     # --- 2. Define Simulation Conditions ---
     # Each dictionary in this list is a separate experimental condition.
