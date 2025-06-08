@@ -19,8 +19,8 @@ except ImportError as e:
 def run_single_replication(task_params):
     """
     A worker function for the multiprocessing Pool.
-    It runs ONE full simulation replication from start to finish and saves the results.
-    This function is nearly identical to the one in the previous Slurm script.
+    It runs ONE full simulation replication from start to finish and saves the results
+    into a structured, condition-specific directory.
 
     Args:
         task_params (dict): A dictionary containing all parameters for a single replication.
@@ -31,12 +31,24 @@ def run_single_replication(task_params):
         condition_name = task_params['condition_name']
         base_output_folder = task_params['base_output_folder']
         
-        # Create a unique folder for this specific replication run
-        run_folder_name = f"{condition_name}_run_{replication_id:03d}"
-        run_output_folder = os.path.join(base_output_folder, run_folder_name)
+        # --- MODIFICATION START ---
+        # Create a two-level directory structure: base_folder -> condition_folder -> run_folder
+
+        # 1. Define the path for the condition-specific folder
+        condition_folder = os.path.join(base_output_folder, condition_name)
         
-        # Define a unique filename for the summary text file for this run
+        # 2. Define the path for this specific run's subfolder inside the condition folder
+        run_subfolder_name = f"run_{replication_id:03d}"
+        run_output_folder = os.path.join(condition_folder, run_subfolder_name)
+        
+        # 3. Define the prefix for files saved within the run folder. Using a specific
+        #    prefix helps identify files if they are ever moved.
+        file_prefix_for_saving = f"{condition_name}_run_{replication_id:03d}"
+
+        # 4. Define the path for the summary text file for this run
         summary_txt_filename = os.path.join(run_output_folder, "run_summary.txt")
+        # --- MODIFICATION END ---
+
 
         # Create a unique, reproducible seed for each replication
         run_seed = task_params['simulation_params']['seed'] + replication_id
@@ -46,7 +58,7 @@ def run_single_replication(task_params):
         sim_params['seed'] = run_seed
         sim_params['output_summary_filename'] = summary_txt_filename
 
-        print(f"  -> Starting replication: {run_folder_name} with seed {run_seed}")
+        print(f"  -> Starting replication: {run_folder_name} (in folder {condition_name}) with seed {run_seed}")
         
         # --- Instantiate and Run Simulation ---
         sim_instance = AssortativeMatingSimulation(**sim_params)
@@ -54,14 +66,15 @@ def run_single_replication(task_params):
         
         # --- Save All Results ---
         if results:
+            # The save function will now write into the nested directory
             save_simulation_results(
                 results=results, 
                 output_folder=run_output_folder, 
-                file_prefix=run_folder_name,
+                file_prefix=file_prefix_for_saving,
                 scope="all"
             )
         
-        print(f"  -> Finished replication: {run_folder_name}")
+        print(f"  -> Finished replication: {run_folder_name} (in folder {condition_name})")
         return f"Success: {run_folder_name}"
 
     except Exception as e:
