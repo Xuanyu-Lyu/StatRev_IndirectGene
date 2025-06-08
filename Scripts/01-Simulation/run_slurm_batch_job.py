@@ -81,7 +81,7 @@ def main():
     
     # Define a base output folder for this entire batch of simulations
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    main_output_directory = f"/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/TestRc/simulation_batch_{timestamp}"
+    main_output_directory = f"/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/TestRc"
     
     REPLICATIONS_PER_CONDITION = 50 
     REPLICATIONS_PER_SLURM_TASK = 2
