@@ -16,9 +16,9 @@
 
 # --- Define the total number of tasks for the array ---
 # This is now (total replications) / (replications per task)
-# (2 conditions * 100 reps/condition) / 10 reps/task = 20 tasks
-# So the array will be indexed 1-20.
-#SBATCH --array=1-50%20
+# (2 conditions * 10 reps/condition) / 2 reps/task = 10 tasks
+# So the array will be indexed 1-10.
+#SBATCH --array=1-10%5
 
 # --- Your Job's Commands ---
 

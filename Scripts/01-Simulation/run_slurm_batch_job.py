@@ -25,30 +25,30 @@ def run_single_replication(task_params):
     Args:
         task_params (dict): A dictionary containing all parameters for a single replication.
     """
+    # Define a default name here in case an error happens before it's properly assigned
+    run_folder_name_for_logging = task_params.get('condition_name', 'unknown') + '_run_' + str(task_params.get('replication_id', 'unknown'))
+    
     try:
         # Unpack parameters for this specific replication
         replication_id = task_params['replication_id']
         condition_name = task_params['condition_name']
         base_output_folder = task_params['base_output_folder']
         
-        # --- MODIFICATION START ---
-        # Create a two-level directory structure: base_folder -> condition_folder -> run_folder
-
+        # --- CORRECTION IS HERE ---
         # 1. Define the path for the condition-specific folder
         condition_folder = os.path.join(base_output_folder, condition_name)
         
-        # 2. Define the path for this specific run's subfolder inside the condition folder
+        # 2. Define the path for this specific run's subfolder
+        #    Let's call the directory itself something simple like "run_001"
         run_subfolder_name = f"run_{replication_id:03d}"
         run_output_folder = os.path.join(condition_folder, run_subfolder_name)
         
-        # 3. Define the prefix for files saved within the run folder. Using a specific
-        #    prefix helps identify files if they are ever moved.
-        file_prefix_for_saving = f"{condition_name}_run_{replication_id:03d}"
+        # 3. Define the descriptive name for logging and file prefixes
+        #    This is the variable that was missing.
+        run_folder_name = f"{condition_name}_run_{replication_id:03d}"
 
         # 4. Define the path for the summary text file for this run
         summary_txt_filename = os.path.join(run_output_folder, "run_summary.txt")
-        # --- MODIFICATION END ---
-
 
         # Create a unique, reproducible seed for each replication
         run_seed = task_params['simulation_params']['seed'] + replication_id
@@ -58,6 +58,7 @@ def run_single_replication(task_params):
         sim_params['seed'] = run_seed
         sim_params['output_summary_filename'] = summary_txt_filename
 
+        # This print statement now correctly uses the defined 'run_folder_name' variable
         print(f"  -> Starting replication: {run_folder_name} (in folder {condition_name}) with seed {run_seed}")
         
         # --- Instantiate and Run Simulation ---
@@ -66,11 +67,10 @@ def run_single_replication(task_params):
         
         # --- Save All Results ---
         if results:
-            # The save function will now write into the nested directory
             save_simulation_results(
                 results=results, 
                 output_folder=run_output_folder, 
-                file_prefix=file_prefix_for_saving,
+                file_prefix=run_folder_name, # Use the descriptive name for file prefixes
                 scope="all"
             )
         
@@ -78,9 +78,9 @@ def run_single_replication(task_params):
         return f"Success: {run_folder_name}"
 
     except Exception as e:
-        run_folder_name = task_params.get('condition_name', 'unknown') + '_run_' + str(task_params.get('replication_id', 'unknown'))
-        error_message = f"Failed: {run_folder_name} with error: {e}"
-        print(f"!!! ERROR in {run_folder_name} !!!")
+        # The logging variable is now defined at the top, so it will exist even if an early error occurs
+        error_message = f"Failed: {run_folder_name_for_logging} with error: {e}"
+        print(f"!!! ERROR in {run_folder_name_for_logging} !!!")
         import traceback
         traceback.print_exc()
         return error_message
@@ -96,7 +96,7 @@ def main():
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     main_output_directory = f"/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/TestRc2"
     
-    REPLICATIONS_PER_CONDITION = 50 
+    REPLICATIONS_PER_CONDITION = 10 
     REPLICATIONS_PER_SLURM_TASK = 2
 
     # --- 2. Define Simulation Conditions ---
