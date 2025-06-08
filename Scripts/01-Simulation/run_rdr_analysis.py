@@ -20,29 +20,13 @@ def _ensure_folder_exists(folder_path):
 def run_rdr_on_replication(task_params):
     """
     Worker function to run RDR analysis on a single simulation replication for a single trait.
-    This encapsulates the logic from your RDR script.
-
-    Args:
-        task_params (dict): Contains the path to the run folder and the trait to analyze.
-
-    Returns:
-        dict: A dictionary containing the estimated parameters and standard errors.
     """
-    # --- MODIFICATION START ---
-    # Unpack ALL necessary parameters at the top
     run_folder_path = task_params['run_folder_path']
     trait_to_analyze = task_params['trait']
-    condition_name = task_params['condition_name'] # <-- This was the missing line
-    
+    condition_name = task_params['condition_name']
     replication_id = int(os.path.basename(run_folder_path).split('_')[-1])
     
-    # Create a base result dictionary that now INCLUDES the condition_name
-    base_result = {
-        'replication': replication_id, 
-        'trait': trait_to_analyze,
-        'condition_name': condition_name # <-- Add it to the base result for all return paths
-    }
-    # --- MODIFICATION END ---
+    base_result = {'replication': replication_id, 'trait': trait_to_analyze, 'condition_name': condition_name}
 
     try:
         # --- 1. Find and Load Data ---
@@ -57,20 +41,26 @@ def run_rdr_on_replication(task_params):
         if not os.path.exists(xo_filepath):
              return {**base_result, 'status': 'failed', 'error': f'XO file not found for {phen_filepath}'}
 
+        # Load phenotype data (this has a header)
         df_phen_offspring = pd.read_csv(phen_filepath, sep='\t')
-        df_gene_o = pd.read_csv(xo_filepath, sep='\t')
+        
+        # *** FIX IS HERE: Load genotype data with header=None ***
+        df_gene_o = pd.read_csv(xo_filepath, sep='\t', header=None)
         
         # --- 2. Prepare Data and Matrices ---
-        Y_offspring = df_phen_offspring[trait_to_analyze].values 
+        Y_offspring = df_phen_offspring[trait_to_analyze].values
         
         parent_gen_num = final_gen_num - 1
-        parent_phen_filepath = [f for f in glob.glob(os.path.join(run_folder_path, "*_phen_gen*.tsv")) if f"gen{parent_gen_num}.tsv" in f]
-        if not parent_phen_filepath:
+        parent_phen_filepath_list = [f for f in glob.glob(os.path.join(run_folder_path, "*_phen_gen*.tsv")) if f"gen{parent_gen_num}.tsv" in f]
+        if not parent_phen_filepath_list:
             return {**base_result, 'status': 'failed', 'error': f'Parent generation file gen{parent_gen_num} not found'}
-        parent_xo_filepath = parent_phen_filepath[0].replace('_phen_', '_xo_')
+        parent_phen_filepath = parent_phen_filepath_list[0]
+        parent_xo_filepath = parent_phen_filepath.replace('_phen_', '_xo_')
 
-        df_phen_parents = pd.read_csv(parent_phen_filepath[0], sep='\t')
-        df_gene_parents_full = pd.read_csv(parent_xo_filepath, sep='\t')
+        df_phen_parents = pd.read_csv(parent_phen_filepath, sep='\t')
+        
+        # *** FIX IS HERE: Load parent genotype data with header=None ***
+        df_gene_parents_full = pd.read_csv(parent_xo_filepath, sep='\t', header=None)
         
         parent_id_to_idx = {id_val: i for i, id_val in enumerate(df_phen_parents['ID'])}
         father_indices = [parent_id_to_idx.get(fid) for fid in df_phen_offspring['Father.ID']]
@@ -120,13 +110,13 @@ def run_rdr_on_replication(task_params):
                 'se_v_e_g': np.exp(p_hat[2]) * se_log_params[2], 'se_c_g_e': np.exp(p_hat[3]) * se_log_params[3],
                 'se_sigma2': np.exp(p_hat[4]) * se_log_params[4]
             }
-            # All return paths now correctly include the base_result dictionary
             return {**base_result, 'status': 'success', **estimates, **ses}
         else:
             return {**base_result, 'status': 'failed', 'error': res.message}
 
     except Exception as e:
         return {**base_result, 'status': 'error', 'error': str(e)}
+
 
 def build_Sigma(params, R_snp, R_par, R_op):
     mu, alpha_g, alpha_e_g, alpha_g_e, alpha_sig = params
