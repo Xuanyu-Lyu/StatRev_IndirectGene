@@ -144,7 +144,7 @@ def main():
     DESTINATION_DIR = "/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results"
     CONDITIONS_TO_PROCESS = ["phenotypic_transmission", "social_transmission"]
     TRAITS_TO_ANALYZE = ["Y1", "Y2"] # *** NEW: Specify traits to analyze ***
-    NUM_PROCESSES = int(os.environ.get('SLURM_CPUS_PER_TASK', 10))
+    NUM_PROCESSES = int(os.environ.get('SLURM_CPUS_PER_TASK', 5))
 
     # --- 2. Generate Task List for All Replications and Traits ---
     tasks = []
