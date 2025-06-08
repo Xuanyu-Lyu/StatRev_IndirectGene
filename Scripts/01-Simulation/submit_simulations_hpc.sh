@@ -3,9 +3,9 @@
 #SBATCH --job-name=sim_batch_hpc        # A name for your job
 #SBATCH --nodes=1                       # Each task requires 1 node
 #SBATCH --ntasks=1                      # Each task is 1 main Python process
-#SBATCH --cpus-per-task=2              # <<< Request 10 CPUs for each task
-#SBATCH --mem=8G                       # <<< Increased memory for running 10 sims at once
-#SBATCH --time=2:00:00               # <<< Increased time limit for running 10 sims
+#SBATCH --cpus-per-task=10              # <<< Request 10 CPUs for each task
+#SBATCH --mem=32G                       # <<< Increased memory for running 10 sims at once
+#SBATCH --time=12:00:00               # <<< Increased time limit for running 10 sims
 #SBATCH --chdir /projects/xuly4739/Py_Projects/StatRev_IndirectGene/Scripts/01-Simulation
 #SBATCH --exclude bmem-rico1
 #SBATCH --output=slurm_logs/sim_run_%A_%a.out  # Path to write stdout, %A is job ID, %a is array task ID
@@ -18,7 +18,7 @@
 # This is now (total replications) / (replications per task)
 # (2 conditions * 10 reps/condition) / 2 reps/task = 10 tasks
 # So the array will be indexed 1-10.
-#SBATCH --array=1-10%5
+#SBATCH --array=1-20
 
 # --- Your Job's Commands ---
 

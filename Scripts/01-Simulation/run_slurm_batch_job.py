@@ -96,13 +96,13 @@ def main():
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     main_output_directory = f"/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/TestRc2"
     
-    REPLICATIONS_PER_CONDITION = 10 
-    REPLICATIONS_PER_SLURM_TASK = 2
+    REPLICATIONS_PER_CONDITION = 100 
+    REPLICATIONS_PER_SLURM_TASK = 10
 
     # --- 2. Define Simulation Conditions ---
     # Each dictionary in this list is a separate experimental condition.
     base_params = {
-        "num_generations": 5, "pop_size": 4e2, "n_CV": 300, "rg_effects": 0.1,
+        "num_generations": 15, "pop_size": 4e4, "n_CV": 300, "rg_effects": 0.1,
         "maf_min": 0.25, "maf_max": 0.45, "avoid_inbreeding": True,
         "save_each_gen": True, "save_covs": False, "summary_file_scope": "all",
         "seed": 202506, "mating_type": "phenotypic"
