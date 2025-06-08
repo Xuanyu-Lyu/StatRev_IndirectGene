@@ -8,8 +8,6 @@ import pandas as pd
 import numpy as np
 from scipy.optimize import minimize
 
-# ... (The functions `_ensure_folder_exists`, `run_rdr_on_replication`, `build_Sigma`, and `neg_log_lik`
-#      do not need to be changed from the last version. They are included here for completeness.)
 
 def _ensure_folder_exists(folder_path):
     """Helper function to create a folder if it doesn't exist."""

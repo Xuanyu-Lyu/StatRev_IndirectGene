@@ -1,13 +1,15 @@
 #!/bin/bash
+#SBATCH --qos=preemptable
 #SBATCH --job-name=rdr_analysis_bivar   # A name for your job
 #SBATCH --nodes=1                         # Request 1 node
 #SBATCH --ntasks=1                        # This script is 1 main process
-#SBATCH --cpus-per-task=2                # Request 2 CPUs for multiprocessing
 #SBATCH --mem=200G                         # Memory for loading and processing data
 #SBATCH --time=0-06:00:00                 # *** MODIFIED: Increased time for running both traits ***
+#SBATCH --chdir /projects/xuly4739/Py_Projects/StatRev_IndirectGene/Scripts/01-Simulation
+#SBATCH --exclude bmem-rico1
 #SBATCH --output=slurm_logs/rdr_processing_%A.out  # Path to write stdout
 #SBATCH --error=slurm_logs/rdr_processing_%A.err   # Path to write stderr
-
+module purge
 # --- Your Job's Commands ---
 
 mkdir -p slurm_logs
