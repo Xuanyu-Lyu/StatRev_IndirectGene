@@ -3,8 +3,8 @@
 #SBATCH --nodes=1                         # Request 1 node
 #SBATCH --ntasks=1                        # This script is 1 main process
 #SBATCH --cpus-per-task=2                # Request 2 CPUs for multiprocessing
-#SBATCH --mem=64G                         # Memory for loading and processing data
-#SBATCH --time=0-04:00:00                 # *** MODIFIED: Increased time for running both traits ***
+#SBATCH --mem=200G                         # Memory for loading and processing data
+#SBATCH --time=0-06:00:00                 # *** MODIFIED: Increased time for running both traits ***
 #SBATCH --output=slurm_logs/rdr_processing_%A.out  # Path to write stdout
 #SBATCH --error=slurm_logs/rdr_processing_%A.err   # Path to write stderr
 
