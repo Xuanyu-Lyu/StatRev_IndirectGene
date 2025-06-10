@@ -20,6 +20,6 @@ echo "Slurm Job ID: $SLURM_JOB_ID"
 echo "Running memory benchmark..."
 echo "------------------------------------------------"
 
-python -u benchmark_memory.py
+python -u Benchmark_sim_memory.py
 
 echo "Benchmark script finished."
