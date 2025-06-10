@@ -97,7 +97,7 @@ def neg_log_lik(params, y, R_snp, R_par, R_op):
 
 def main():
     # --- 1. Configuration for Benchmarking ---
-    REPLICATION_FOLDER_TO_BENCHMARK = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/TestRc2/phenotypic_transmission/run_001"
+    REPLICATION_FOLDER_TO_BENCHMARK = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Preliminary/phenotypic_transmission/run_001"
     
     # *** MODIFIED: Define ranges for both N (individuals) and M (SNPs) ***
     BENCHMARK_N_VALUES = [500, 1000, 2000, 10000] 
