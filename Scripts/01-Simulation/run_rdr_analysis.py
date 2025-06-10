@@ -1,9 +1,7 @@
-# File: run_rdr_analysis.py
 
 import os
 import sys
 import glob
-# import multiprocessing # No longer needed
 import pandas as pd
 import numpy as np
 from scipy.optimize import minimize

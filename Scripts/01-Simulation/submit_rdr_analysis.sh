@@ -31,6 +31,6 @@ export MKL_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
 
 # Run your new Python processing script
-python run_rdr_analysis.py
+python -u run_rdr_analysis.py
 
 echo "RDR processing job finished."
