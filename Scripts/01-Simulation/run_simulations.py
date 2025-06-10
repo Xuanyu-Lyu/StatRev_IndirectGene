@@ -19,11 +19,8 @@ except ImportError as e:
 def run_single_replication(task_params):
     """
     A worker function for the multiprocessing Pool.
-    It runs ONE full simulation replication from start to finish and saves the results
-    into a structured, condition-specific directory.
-
-    Args:
-        task_params (dict): A dictionary containing all parameters for a single replication.
+    It runs ONE full simulation replication from start to finish and saves the results,
+    including a human-readable summary text file for each run.
     """
     # Define a default name here in case an error happens before it's properly assigned
     run_folder_name_for_logging = task_params.get('condition_name', 'unknown') + '_run_' + str(task_params.get('replication_id', 'unknown'))
@@ -34,51 +31,50 @@ def run_single_replication(task_params):
         condition_name = task_params['condition_name']
         base_output_folder = task_params['base_output_folder']
         
-        # --- CORRECTION IS HERE ---
+        # --- PATH AND FILENAME SETUP ---
         # 1. Define the path for the condition-specific folder
         condition_folder = os.path.join(base_output_folder, condition_name)
         
         # 2. Define the path for this specific run's subfolder
-        #    Let's call the directory itself something simple like "run_001"
         run_subfolder_name = f"run_{replication_id:03d}"
         run_output_folder = os.path.join(condition_folder, run_subfolder_name)
         
         # 3. Define the descriptive name for logging and file prefixes
-        #    This is the variable that was missing.
-        run_folder_name = f"{condition_name}_run_{replication_id:03d}"
+        file_prefix = f"{condition_name}_run_{replication_id:03d}"
 
-        # 4. Define the path for the summary text file for this run
-        summary_txt_filename = os.path.join(run_output_folder, "run_summary.txt")
+        # 4. Define the full path for the readable summary text file
+        #    This will be passed to the simulation class.
+        summary_txt_filename = os.path.join(run_output_folder, f"{file_prefix}_summary.txt")
 
         # Create a unique, reproducible seed for each replication
         run_seed = task_params['simulation_params']['seed'] + replication_id
         
-        # Update simulation parameters with the unique seed and summary filename
+        # Update simulation parameters with the unique seed and the specific summary filename
         sim_params = task_params['simulation_params'].copy()
         sim_params['seed'] = run_seed
-        sim_params['output_summary_filename'] = summary_txt_filename
+        sim_params['output_summary_filename'] = summary_txt_filename # Pass the unique filename
 
-        # This print statement now correctly uses the defined 'run_folder_name' variable
-        print(f"  -> Starting replication: {run_folder_name} (in folder {condition_name}) with seed {run_seed}")
+        print(f"  -> Starting replication: {file_prefix} with seed {run_seed}")
         
         # --- Instantiate and Run Simulation ---
         sim_instance = AssortativeMatingSimulation(**sim_params)
         results = sim_instance.run_simulation()
         
         # --- Save All Results ---
+        # The readable summary is now saved automatically by the SimulationFunctions class.
+        # This function saves the primary data (TSV files).
         if results:
             save_simulation_results(
                 results=results, 
                 output_folder=run_output_folder, 
-                file_prefix=run_folder_name, # Use the descriptive name for file prefixes
+                file_prefix=file_prefix,
                 scope="all"
             )
         
-        print(f"  -> Finished replication: {run_folder_name} (in folder {condition_name})")
-        return f"Success: {run_folder_name}"
+        print(f"  -> Finished replication: {file_prefix}")
+        return f"Success: {file_prefix}"
 
     except Exception as e:
-        # The logging variable is now defined at the top, so it will exist even if an early error occurs
         error_message = f"Failed: {run_folder_name_for_logging} with error: {e}"
         print(f"!!! ERROR in {run_folder_name_for_logging} !!!")
         import traceback
@@ -94,15 +90,15 @@ def main():
     
     # Define a base output folder for this entire batch of simulations
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    main_output_directory = f"/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Preliminary"
+    main_output_directory = f"/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final"
     
-    REPLICATIONS_PER_CONDITION = 100 
-    REPLICATIONS_PER_SLURM_TASK = 5
+    REPLICATIONS_PER_CONDITION = 1000 
+    REPLICATIONS_PER_SLURM_TASK = 4
 
     # --- 2. Define Simulation Conditions ---
     # Each dictionary in this list is a separate experimental condition.
     base_params = {
-        "num_generations": 15, "pop_size": 4e4, "n_CV": 300, "rg_effects": 0.1,
+        "num_generations": 20, "pop_size": 8e4, "n_CV": 300, "rg_effects": 0.1,
         "maf_min": 0.25, "maf_max": 0.45, "avoid_inbreeding": True,
         "save_each_gen": True, "save_covs": False, "summary_file_scope": "all",
         "seed": 202506, "mating_type": "phenotypic"
@@ -126,7 +122,7 @@ def main():
 
     simulation_conditions = [
         {
-            "condition_name": "phenotypic_transmission",
+            "condition_name": "phenoVT_phenoAM",
             "simulation_params": {
                 **base_params, 
                 "mating_type": "phenotypic",
@@ -135,12 +131,30 @@ def main():
             }
         },
         {
-            "condition_name": "social_transmission",
+            "condition_name": "socialVT_phenoAM",
             "simulation_params": {
                 **base_params, 
                 "mating_type": "phenotypic",
                 "f_mat": f_mat_condition_B, # Use the second set of matrices
                 "s_mat": s_mat_condition_B
+            }
+        },
+        {
+            "condition_name": "phenoVT_socialAM",
+            "simulation_params": {
+                **base_params, 
+                "mating_type": "social",
+                "f_mat": f_mat_condition_A, # Use the second set of matrices
+                "s_mat": s_mat_condition_A
+            }
+        },
+                {
+            "condition_name": "phenoVT_geneticAM",
+            "simulation_params": {
+                **base_params, 
+                "mating_type": "genetic",
+                "f_mat": f_mat_condition_A, # Use the second set of matrices
+                "s_mat": s_mat_condition_A
             }
         }
     ]
