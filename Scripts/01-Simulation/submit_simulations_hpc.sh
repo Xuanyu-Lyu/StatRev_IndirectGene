@@ -4,7 +4,7 @@
 #SBATCH --nodes=1                       # Each task requires 1 node
 #SBATCH --ntasks=1                      # Each task is 1 main Python process
 #SBATCH --cpus-per-task=4               # Match REPLICATIONS_PER_SLURM_TASK
-#SBATCH --mem=250G                      # Large memory for a large population size
+#SBATCH --mem=300G                      # Large memory for a large population size
 #SBATCH --time=12:00:00               # Request 1 full day (D-HH:MM:SS) for safety
 #SBATCH --chdir /projects/xuly4739/Py_Projects/StatRev_IndirectGene/Scripts/01-Simulation
 #SBATCH --exclude bmem-rico1
