@@ -28,7 +28,7 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
 
     # Step 1: Prepare inputs for this specific subsample
     echo "Step 1: Preparing GCTA inputs for N=${N}..."
-    python prepare_gcta_subsample.py ${RUN_FOLDER} ${WORK_DIR} ${N}
+    python prepare_combined_plink.py ${RUN_FOLDER} ${WORK_DIR} ${N}
     
     # Step 2: Create PLINK binary file from the subsampled data
     plink --file "${WORK_DIR}/combined_genos" --make-bed --out "${WORK_DIR}/combined_plink" --noweb
