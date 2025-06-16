@@ -3,8 +3,9 @@
 #SBATCH --job-name=process_sims         # A name for your job
 #SBATCH --nodes=1                       # Request 1 node
 #SBATCH --ntasks=1                      # This script is 1 main process
-#SBATCH --mem=100G                       # Memory for loading and processing data
-#SBATCH --time=0-02:00:00               # Max job time: D-HH:MM:SS (e.g., 2 hours)
+#SBATCH --cpus-per-task=10              # Number of CPUs allocated to this task
+#SBATCH --mem=200G                       # Memory for loading and processing data
+#SBATCH --time=0-12:00:00               # Max job time: D-HH:MM:SS (e.g., 2 hours)
 #SBATCH --chdir /projects/xuly4739/Py_Projects/StatRev_IndirectGene/Scripts/01-Simulation
 #SBATCH --exclude bmem-rico1
 #SBATCH --output=slurm_logs/processing_%A.out  # Path to write stdout (%A is job ID)
