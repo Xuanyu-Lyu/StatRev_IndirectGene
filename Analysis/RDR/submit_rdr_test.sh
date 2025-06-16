@@ -49,6 +49,6 @@ if [ -z "${RUN_FOLDER}" ]; then
 fi
 
 # --- Execute the worker script ---
-./run_gcta_for_samplesizes.sh "${RUN_FOLDER}" "${BASE_OUTPUT_DIR}"
+./run_gcta_rdr.sh "${RUN_FOLDER}" "${BASE_OUTPUT_DIR}"
 
 echo "Slurm Array Task ${SLURM_ARRAY_TASK_ID} finished processing all sample sizes."
