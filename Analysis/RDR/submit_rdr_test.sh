@@ -32,7 +32,7 @@ source /curc/sw/anaconda3/latest
 conda activate /projects/xuly4739/general_env
 
 # Make the worker script executable
-chmod +x run_gcta_for_samplesizes.sh
+chmod +x run_gcta_rdr.sh
 
 # --- Map Slurm Task ID to an input folder ---
 # This finds all 'run_*' directories and uses the SLURM_ARRAY_TASK_ID to pick one
