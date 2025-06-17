@@ -55,20 +55,20 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     fi
     done
 
-    echo ">>> Decompressing text GRMs for GCTA multi‐GRM:"
-    for comp in Ro_offspring Rp_parental Rop_cross; do
-    gzfile="${WORK_DIR}/grm_combined_${comp}.grm.gz"
-    grmfile="${WORK_DIR}/grm_combined_${comp}.grm"
-    gzip -dc "$gzfile" > "$grmfile"
-    echo "    decompressed $gzfile → $grmfile"
-    done
+    # echo ">>> Decompressing text GRMs for GCTA multi‐GRM:"
+    # for comp in Ro_offspring Rp_parental Rop_cross; do
+    # gzfile="${WORK_DIR}/grm_combined_${comp}.grm.gz"
+    # grmfile="${WORK_DIR}/grm_combined_${comp}.grm"
+    # gzip -dc "$gzfile" > "$grmfile"
+    # echo "    decompressed $gzfile → $grmfile"
+    # done
 
-    echo ">>> Converting each text GRM into binary form:"
+    echo ">>> Converting each gz GRM into binary form:"
     for comp in Ro_offspring Rp_parental Rop_cross; do
     prefix="${WORK_DIR}/grm_combined_${comp}"
     echo "    converting ${prefix}.grm → binary"
     gcta64 \
-        --grm "${prefix}" \
+        --grm-gz "${prefix}.grm.gz" \
         --make-grm \
         --out "${prefix}"
     echo "    produced: ${prefix}.grm.bin + ${prefix}.grm.N.bin + ${prefix}.grm.id"
