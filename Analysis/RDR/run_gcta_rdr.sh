@@ -63,6 +63,17 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     echo "    decompressed $gzfile → $grmfile"
     done
 
+    echo ">>> Converting each text GRM into binary form:"
+    for comp in Ro_offspring Rp_parental Rop_cross; do
+    prefix="${WORK_DIR}/grm_combined_${comp}"
+    echo "    converting ${prefix}.grm → binary"
+    gcta64 \
+        --grm-old "${prefix}" \
+        --make-grm \
+        --out "${prefix}"
+    echo "    produced: ${prefix}.grm.bin + ${prefix}.grm.N.bin + ${prefix}.grm.id"
+    done
+
 
     # Step 5: Create the multi-GRM input file (mgrm.txt)
     echo "Step 5: Creating multi-GRM file for N=${N}..."
