@@ -101,7 +101,7 @@ def main():
     simulation_conditions = [
         #{"condition_name": "phenoVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
         #{"condition_name": "socialVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
-        #{"condition_name": "phenoVT_socialAM", "simulation_params": {**base_params, "mating_type": "social", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
+        {"condition_name": "phenoVT_socialAM", "simulation_params": {**base_params, "mating_type": "social", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
         {"condition_name": "phenoVT_geneticAM", "simulation_params": {**base_params, "mating_type": "genotypic", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}}
     ]
 
@@ -136,7 +136,7 @@ def main():
         if os.path.isdir(run_output_folder):
             # A simple check is just for the folder, a more robust check could be
             # for a specific file, e.g., the summary.txt file.
-            summary_file_path = os.path.join(run_output_folder, f"{condition_name}_run_{i:03d}_summary.txt")
+            summary_file_path = os.path.join(run_output_folder, f"{condition_name}_run_{i:03d}_xo_gen20.tsv")
             if os.path.exists(summary_file_path):
                  print(f"Skipping replication {i} for condition '{condition_name}': Output directory and summary file already exist.")
                  continue # Go to the next replication
