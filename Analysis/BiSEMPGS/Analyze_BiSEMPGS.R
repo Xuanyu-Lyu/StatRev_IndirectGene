@@ -45,3 +45,7 @@ df_phenoVT_16000 <- getDf(sum_list, fixed = FALSE)
 
 psych::describe(df_phenoVT_16000)
 
+
+0.54^2 + 0.71^2
+
+0.44^2 + 0.72^2
