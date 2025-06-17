@@ -90,6 +90,12 @@ def main(run_folder_path, work_dir, sample_size):
     phen_parental_plink = phen_offspring_plink.copy()
     create_plink_files(phen_parental_plink, pd.DataFrame(df_gene_p_midpoint), os.path.join(work_dir, "parental_midpoint_genos"))
     
+    # 7. combine offspring and parental data vertically
+    ped_combined = pd.concat([phen_offspring_plink, phen_parental_plink], ignore_index=True)
+    geno_combined = pd.concat([df_gene_o, pd.DataFrame(df_gene_p_midpoint)], ignore_index=True)
+    create_plink_files(ped_combined, geno_combined, os.path.join(work_dir, "combined_genos"))
+
+    
     pheno_gcta_df = df_phen_offspring[['Father.ID', 'ID', 'Y1', 'Y2']].copy()
     pheno_gcta_df.columns = ['FID', 'IID', 'Trait1', 'Trait2']
     pheno_gcta_df.to_csv(os.path.join(work_dir, "offspring.phen"), sep='\t', index=False, header=False)
