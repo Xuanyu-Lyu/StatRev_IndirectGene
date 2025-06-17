@@ -63,7 +63,7 @@ def run_single_replication(task_params):
                 results=results, 
                 output_folder=run_output_folder, 
                 file_prefix=file_prefix,
-                scope="all"
+                scope=[1,19,20]
             )
         
         print(f"  -> Finished replication: {file_prefix}")
