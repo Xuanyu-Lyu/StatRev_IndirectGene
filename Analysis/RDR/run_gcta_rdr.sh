@@ -2,7 +2,7 @@
 set -e 
 
 if [[ -z "$1" || -z "$2" ]]; then
-    echo "Usage: ./run_gcta_rdr.sh <path_to_run_folder> <path_to_final_results_dir>"
+    echo "Usage: ./run_gcta_rdr.sh <path_to_run_folder_on_scratch> <path_to_final_results_dir_on_projects>"
     exit 1
 fi
 
@@ -19,9 +19,9 @@ echo "--- Starting RDR analysis for ${RUN_ID} across multiple sample sizes ---"
 for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     echo -e "\n================== Processing for N=${N} =================="
     
-    # Create a unique working directory for this specific run AND sample size
+    # This WORK_DIR is now correctly created inside the SCRATCH RUN_FOLDER
     WORK_DIR="${RUN_FOLDER}/gcta_analysis/N_${N}"
-    # Create a unique output prefix for the final GCTA results in the /projects directory
+    # This OUTPUT_PREFIX correctly points to the permanent PROJECTS directory
     OUTPUT_PREFIX="${FINAL_RESULTS_DIR}/${RUN_ID}_N${N}"
     
     mkdir -p ${WORK_DIR}
@@ -42,11 +42,11 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     echo "Step 4: Partitioning GRM for N=${N}..."
     python partition_grm.py "${WORK_DIR}/grm_combined"
 
-    # Step 5: Create the multi-GRM input file (mgrm.txt)
+    # Step 5: Create the multi-GRM input file (mgrm.txt) - WITH TYPO FIXED
     echo "Step 5: Creating multi-GRM file for N=${N}..."
     echo "grm_O ${WORK_DIR}/grm_combined_Ro_offspring" > "${WORK_DIR}/mgrm.txt"
     echo "grm_P ${WORK_DIR}/grm_combined_Rp_parental" >> "${WORK_DIR}/mgrm.txt"
-    echo "g_OP ${WORK_DIR}/grm_combined_Rop_cross" >> "${WORK_DIR}/mgrm.txt"
+    echo "grm_OP ${WORK_DIR}/grm_combined_Rop_cross" >> "${WORK_DIR}/mgrm.txt" 
 
     # Step 6: Run Univariate GREML Analysis with 3 GRMs for each Trait
     echo "Step 6: Running RDR GREML analysis for Trait 1 (Y1) with N=${N}..."
