@@ -68,7 +68,7 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     prefix="${WORK_DIR}/grm_combined_${comp}"
     echo "    converting ${prefix}.grm → binary"
     gcta64 \
-        --grm-old "${prefix}" \
+        --grm "${prefix}" \
         --make-grm \
         --out "${prefix}"
     echo "    produced: ${prefix}.grm.bin + ${prefix}.grm.N.bin + ${prefix}.grm.id"
