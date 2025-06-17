@@ -63,16 +63,16 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     # echo "    decompressed $gzfile → $grmfile"
     # done
 
-    echo ">>> Converting each gz GRM into binary form:"
-    for comp in Ro_offspring Rp_parental Rop_cross; do
-    prefix="${WORK_DIR}/grm_combined_${comp}"
-    echo "    converting ${prefix}.grm → binary"
-    gcta64 \
-        --grm-gz "${prefix}.grm.gz" \
-        --make-grm \
-        --out "${prefix}"
-    echo "    produced: ${prefix}.grm.bin + ${prefix}.grm.N.bin + ${prefix}.grm.id"
-    done
+    # echo ">>> Converting each gz GRM into binary form:"
+    # for comp in Ro_offspring Rp_parental Rop_cross; do
+    # prefix="${WORK_DIR}/grm_combined_${comp}"
+    # echo "    converting ${prefix}.grm → binary"
+    # gcta64 \
+    #     --grm-gz "${prefix}.grm.gz" \
+    #     --make-grm \
+    #     --out "${prefix}"
+    # echo "    produced: ${prefix}.grm.bin + ${prefix}.grm.N.bin + ${prefix}.grm.id"
+    # done
 
 
     # Step 5: Create the multi-GRM input file (mgrm.txt)
@@ -87,14 +87,14 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     echo ">>> Contents of ${WORK_DIR}/mgrm.txt:"
     cat "${WORK_DIR}/mgrm.txt"
     echo "Step 6: Running RDR GREML analysis for Trait 1 (Y1) with N=${N}..."
-    gcta64 --reml --mgrm "${WORK_DIR}/mgrm.txt" \
+    gcta64 --reml --mgrm-gz "${WORK_DIR}/mgrm.txt" \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 1 \
            --out "${OUTPUT_PREFIX}_Y1" \
            --reml-maxit 100 \
            --thread-num 2
 
     # Step 7: Running RDR GREML analysis for Trait 2 (Y2) with N=${N}..."
-    gcta64 --reml --mgrm "${WORK_DIR}/mgrm.txt" \
+    gcta64 --reml --mgrm-gz "${WORK_DIR}/mgrm.txt" \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 2 \
            --out "${OUTPUT_PREFIX}_Y2" \
            --reml-maxit 100 \
