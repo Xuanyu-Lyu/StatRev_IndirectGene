@@ -5,15 +5,15 @@
 #SBATCH --ntasks=1                      # Each task is 1 main Python process
 #SBATCH --cpus-per-task=4               # Match REPLICATIONS_PER_SLURM_TASK
 #SBATCH --mem=300G                      # Large memory for a large population size
-#SBATCH --time=12:00:00               # Request 1 full day (D-HH:MM:SS) for safety
+#SBATCH --time=6:00:00               # Request 1 full day (D-HH:MM:SS) for safety
 #SBATCH --chdir /projects/xuly4739/Py_Projects/StatRev_IndirectGene/Scripts/01-Simulation
 #SBATCH --exclude bmem-rico1
 #SBATCH --output=slurm_logs/sim_run_%A_%a.out
 #SBATCH --error=slurm_logs/sim_run_%A_%a.err
 
 # --- Define the total number of tasks for the array ---
-# CORRECTED: (4 conditions * 1000 reps) / 4 reps_per_task = 1000 tasks
-#SBATCH --array=1-1000%30
+# CORRECTED: (2 conditions * 1000 reps) / 4 reps_per_task = 500 tasks
+#SBATCH --array=1-500%25
 
 # --- Your Job's Commands ---
 

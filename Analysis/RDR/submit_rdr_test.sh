@@ -7,24 +7,45 @@
 # --- Job Resource Settings ---
 # The job name is changed to distinguish it from your main analysis runs.
 # Time and memory are reduced for a quicker test.
-#SBATCH --job-name=gcta_rdr      # A specific name for this test job
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=5
 #SBATCH --mem=100G                      # Keep memory high as each task is still large
-#SBATCH --time=0-01:00:00               # 1-hour time limit is plenty for a 2-task test
-
-# --- Log File Settings ---
-#SBATCH --output=slurm_logs/gcta_rdr_%A_%a.out
-#SBATCH --error=slurm_logs/gcta_rdr_%A_%a.err
+#SBATCH --time=0-20:00:00               # 20-hour time limit is plenty for a 2-task test
 
 # --- Define the array size for the test ---
 # *** MODIFIED: Only run the first 2 tasks of the array ***
-#SBATCH --array=1-2
+#SBATCH --array=1-1000%25
 
+# --- Dynamic Job Name and Log File Settings ---
+# The job name and log files are set dynamically using the CONDITION_NAME variable.
+# This prevents outputs from different conditions from overwriting each other.
+#
+# *** MODIFIED: Using ${CONDITION_NAME} variable for unique naming ***
+#SBATCH --job-name=gcta_rdr_${CONDITION_NAME}
+#SBATCH --output=slurm_logs/gcta_rdr_${CONDITION_NAME}_%A_%a.out
+#SBATCH --error=slurm_logs/gcta_rdr_${CONDITION_NAME}_%A_%a.err
+
+# --- How to Submit the Job ---
+#
+# You must still provide the condition name when you submit the job.
+#
+# In your terminal, run this command:
+#   sbatch --export=CONDITION_NAME="your_condition_name_here" your_script_name.sh
+#
 # --- Start of Job Commands ---
 set -e
 mkdir -p slurm_logs
+
+# --- Validate Input: Check if CONDITION_NAME is set ---
+if [ -z "${CONDITION_NAME}" ]; then
+    echo "Error: The CONDITION_NAME environment variable is not set."
+    echo "Please set it when submitting the job with sbatch."
+    echo 'Example: sbatch --export=CONDITION_NAME="phenoVT_phenoAM"' "$0"
+    exit 1
+fi
+
+
 
 # Load environment
 module purge
