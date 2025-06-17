@@ -95,14 +95,14 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     echo ">>> Contents of ${WORK_DIR}/mgrm.txt:"
     cat "${WORK_DIR}/mgrm.txt"
     echo "Step 6: Running RDR GREML analysis for Trait 1 (Y1) with N=${N}..."
-    gcta64 --reml-no-constrain --mgrm-gz "${WORK_DIR}/mgrm.txt" \
+    gcta64 --reml-no-lrt --mgrm-gz "${WORK_DIR}/mgrm.txt" \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 1 \
            --out "${OUTPUT_PREFIX}_Y1" \
            --reml-maxit 100 \
            --thread-num 2
 
     # Step 7: Running RDR GREML analysis for Trait 2 (Y2) with N=${N}..."
-    gcta64 --reml-no-constrain --mgrm-gz "${WORK_DIR}/mgrm.txt" \
+    gcta64 --reml-no-lrt --mgrm-gz "${WORK_DIR}/mgrm.txt" \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 2 \
            --out "${OUTPUT_PREFIX}_Y2" \
            --reml-maxit 100 \

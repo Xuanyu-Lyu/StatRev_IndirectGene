@@ -1,5 +1,3 @@
-# File: prepare_combined_plink.py
-
 import pandas as pd
 import numpy as np
 import sys
@@ -27,64 +25,79 @@ def create_plink_files(phen_df, geno_df, output_prefix):
     full_ped_df.to_csv(f"{output_prefix}.ped", sep=' ', index=False, header=False, na_rep='0')
 
 def main(run_folder_path, work_dir, sample_size):
-    """Prepares GCTA inputs for a specific subsample size."""
+    """Prepares GCTA inputs for a specific subsample of N independent trios."""
     os.makedirs(work_dir, exist_ok=True)
     sample_size = int(sample_size)
-    print(f"--- Preparing GCTA inputs for {os.path.basename(run_folder_path)} with N={sample_size} ---")
+    print(f"--- Preparing GCTA inputs for {os.path.basename(run_folder_path)} with N={sample_size} independent trios ---")
     
+    # 1. Load all necessary data files
     final_gen_num = 20
     phen_filepath = glob.glob(os.path.join(run_folder_path, f"*_phen_gen{final_gen_num}.tsv"))[0]
     xo_filepath = phen_filepath.replace('_phen_', '_xo_')
+    xl_filepath = phen_filepath.replace('_phen_', '_xl_')
     parent_phen_filepath = glob.glob(os.path.join(run_folder_path, f"*_phen_gen{final_gen_num-1}.tsv"))[0]
     parent_xo_filepath = parent_phen_filepath.replace('_phen_', '_xo_')
+    parent_xl_filepath = parent_phen_filepath.replace('_phen_', '_xl_')
 
     df_phen_offspring_full = pd.read_csv(phen_filepath, sep='\t')
-    df_gene_o_full = pd.read_csv(xo_filepath, sep='\t', header=None)
+    df_gene_o_full = pd.concat([
+        pd.read_csv(xo_filepath, sep='\t', header=None),
+        pd.read_csv(xl_filepath, sep='\t', header=None)
+    ], axis=1, ignore_index=True)
     df_phen_parents_full = pd.read_csv(parent_phen_filepath, sep='\t')
-    df_gene_parents_full = pd.read_csv(parent_xo_filepath, sep='\t', header=None)
+    df_gene_parents_full = pd.concat([
+        pd.read_csv(parent_xo_filepath, sep='\t', header=None),
+        pd.read_csv(parent_xl_filepath, sep='\t', header=None)
+    ], axis=1, ignore_index=True)
 
-    # *** NEW: Subsample Data to Target Size (N) ***
-    if len(df_phen_offspring_full) < sample_size:
-        print(f"    Warning: Available individuals ({len(df_phen_offspring_full)}) is smaller than target size ({sample_size}). Using all available.")
-        sample_size = len(df_phen_offspring_full)
-    
-    # Take a random sample of offspring indices from the full dataset
-    sampled_indices = np.random.choice(df_phen_offspring_full.index, size=sample_size, replace=False)
-    
-    # Filter all dataframes based on the sampled offspring
-    df_phen_offspring = df_phen_offspring_full.loc[sampled_indices].reset_index(drop=True)
-    df_gene_o = df_gene_o_full.loc[sampled_indices].reset_index(drop=True)
-    
-    # Prepare parent data corresponding to the sampled offspring
+    # 2. First, identify all offspring who form complete trios
     parent_id_to_idx = {id_val: i for i, id_val in enumerate(df_phen_parents_full['ID'])}
-    father_indices = [parent_id_to_idx.get(fid) for fid in df_phen_offspring['Father.ID']]
-    mother_indices = [parent_id_to_idx.get(mid) for mid in df_phen_offspring['Mother.ID']]
-    valid_mask = np.array([(f is not None) and (m is not None) for f, m in zip(father_indices, mother_indices)])
+    df_phen_offspring_full['father_idx'] = df_phen_offspring_full['Father.ID'].map(parent_id_to_idx)
+    df_phen_offspring_full['mother_idx'] = df_phen_offspring_full['Mother.ID'].map(parent_id_to_idx)
+    valid_trios_df = df_phen_offspring_full.dropna(subset=['father_idx', 'mother_idx']).copy()
+
+    # 3. From the valid trios, get one offspring per family to ensure independence
+    # Using Father.ID as the family identifier, similar to your R script
+    independent_offspring_df = valid_trios_df.drop_duplicates(subset=['Father.ID'], keep='first')
+    print(f"    Found {len(independent_offspring_df)} total independent trios in the raw data.")
+
+    # 4. Now, sample N trios from this set of independent families
+    if len(independent_offspring_df) < sample_size:
+        print(f"    Warning: Available independent trios ({len(independent_offspring_df)}) is smaller than target N ({sample_size}). Using all available.")
+        sample_size = len(independent_offspring_df)
     
-    if not np.all(valid_mask):
-        raise RuntimeError("Could not find all parents for the subsampled offspring.")
-        
+    # Take a random sample of N trios from the independent set
+    sampled_trios_df = independent_offspring_df.sample(n=sample_size, random_state=42)
+    
+    # 5. Get the final data based on the sampled trios
+    offspring_indices = sampled_trios_df.index
+    father_indices = sampled_trios_df['father_idx'].astype(int).values
+    mother_indices = sampled_trios_df['mother_idx'].astype(int).values
+
+    df_phen_offspring = df_phen_offspring_full.loc[offspring_indices].reset_index(drop=True)
+    df_gene_o = df_gene_o_full.loc[offspring_indices].reset_index(drop=True)
+    
+    # Get the corresponding parental genotypes
     df_gene_f = df_gene_parents_full.iloc[father_indices]
     df_gene_m = df_gene_parents_full.iloc[mother_indices]
     df_gene_p_midpoint = (df_gene_f.values + df_gene_m.values) / 2.0
 
-    # Create combined pedigree and genotype data FOR THE SUBSAMPLE
-    ped_offspring = pd.DataFrame({'FID': df_phen_offspring['Father.ID'], 'IID': df_phen_offspring['ID'], 'PatID': df_phen_offspring['Father.ID'], 'MatID': df_phen_offspring['Mother.ID'], 'Sex': df_phen_offspring['Sex'], 'Phenotype': df_phen_offspring['Y1']})
-    ped_parents = pd.DataFrame({'FID': df_phen_offspring['Father.ID'], 'IID': [f"P_{iid}" for iid in df_phen_offspring['ID']], 'PatID': 0, 'MatID': 0, 'Sex': 0, 'Phenotype': -9})
-    ped_combined = pd.concat([ped_offspring, ped_parents], ignore_index=True)
-    geno_combined = pd.concat([df_gene_o, pd.DataFrame(df_gene_p_midpoint)], ignore_index=True)
-
-    # Create combined PLINK files
-    create_plink_files(ped_combined, geno_combined, os.path.join(work_dir, "combined_genos"))
-    print("Saved combined .ped and .map files for subsample.")
-
-    # Save phenotype file for GCTA
+    # 6. Create PLINK and phenotype files for the final N x M dataset
+    phen_offspring_plink = pd.DataFrame({'FID': df_phen_offspring['Father.ID'], 'IID': df_phen_offspring['ID'], 'PatID': df_phen_offspring['Father.ID'], 'MatID': df_phen_offspring['Mother.ID'], 'Sex': df_phen_offspring['Sex'], 'Phenotype': df_phen_offspring['Y1']})
+    create_plink_files(phen_offspring_plink, df_gene_o, os.path.join(work_dir, "offspring_genos"))
+    
+    phen_parental_plink = phen_offspring_plink.copy()
+    create_plink_files(phen_parental_plink, pd.DataFrame(df_gene_p_midpoint), os.path.join(work_dir, "parental_midpoint_genos"))
+    
     pheno_gcta_df = df_phen_offspring[['Father.ID', 'ID', 'Y1', 'Y2']].copy()
     pheno_gcta_df.columns = ['FID', 'IID', 'Trait1', 'Trait2']
     pheno_gcta_df.to_csv(os.path.join(work_dir, "offspring.phen"), sep='\t', index=False, header=False)
-    print("Saved GCTA phenotype file for subsample.")
-
-    print(f"--- Finished data prep for N={sample_size} ---")
+    
+    print(f"--- Finished data prep for N={sample_size} independent trios ---")
 
 if __name__ == '__main__':
+    # Usage: python prepare_gcta_input.py <path_to_run_folder> <output_work_dir> <sample_size>
+    if len(sys.argv) != 4:
+        print("Usage: python prepare_gcta_input.py <path_to_run_folder> <output_work_dir> <sample_size>")
+        sys.exit(1)
     main(sys.argv[1], sys.argv[2], sys.argv[3])
