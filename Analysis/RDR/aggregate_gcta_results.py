@@ -59,8 +59,8 @@ def main():
     # Create a final DataFrame and save it
     final_df = pd.DataFrame(all_results)
     final_df.sort_values(by=['condition', 'trait', 'sample_size', 'replication'], inplace=True)
-    
-    output_path = os.path.join(RESULTS_DIR, "aggregated_rdr_gcta_results.tsv")
+
+    output_path = os.path.join("/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/", "aggregated_rdr_gcta_results.tsv")
     final_df.to_csv(output_path, sep='\t', index=False)
     
     print(f"\nAggregation complete. Final results table saved to:\n{output_path}")
