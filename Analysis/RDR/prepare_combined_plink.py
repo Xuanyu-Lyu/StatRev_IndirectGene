@@ -76,7 +76,8 @@ def main(run_folder_path, work_dir, sample_size):
 
     df_phen_offspring = df_phen_offspring_full.loc[offspring_indices].reset_index(drop=True)
     df_gene_o = df_gene_o_full.loc[offspring_indices].reset_index(drop=True)
-    
+    print(f"    Loaded and combined offspring & parent genotypes. Total SNPs: {df_gene_o_full.shape[1]}")
+
     # Get the corresponding parental genotypes
     df_gene_f = df_gene_parents_full.iloc[father_indices]
     df_gene_m = df_gene_parents_full.iloc[mother_indices]
