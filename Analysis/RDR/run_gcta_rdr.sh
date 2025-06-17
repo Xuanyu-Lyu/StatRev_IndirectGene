@@ -42,12 +42,14 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     echo "Step 4: Partitioning GRM for N=${N}..."
     python partition_grm.py "${WORK_DIR}/grm_combined"
 
-    # Step 5: Create the multi-GRM input file (mgrm.txt) - WITH TYPO FIXED
+    # Step 5: Create the multi-GRM input file (mgrm.txt)
     echo "Step 5: Creating multi-GRM file for N=${N}..."
-    echo "grm_O ${WORK_DIR}/grm_combined_Ro_offspring" > "${WORK_DIR}/mgrm.txt"
-    echo "grm_P ${WORK_DIR}/grm_combined_Rp_parental" >> "${WORK_DIR}/mgrm.txt"
-    echo "grm_OP ${WORK_DIR}/grm_combined_Rop_cross" >> "${WORK_DIR}/mgrm.txt" 
-
+    printf "%s %s\n" \
+    "grm_O" "${WORK_DIR}/grm_combined_Ro_offspring" \
+    "grm_P" "${WORK_DIR}/grm_combined_Rp_parental" \
+    "grm_OP" "${WORK_DIR}/grm_combined_Rop_cross" \
+    > "${WORK_DIR}/mgrm.txt"
+    
     # Step 6: Run Univariate GREML Analysis with 3 GRMs for each Trait
     echo "Step 6: Running RDR GREML analysis for Trait 1 (Y1) with N=${N}..."
     gcta64 --reml --mgrm "${WORK_DIR}/mgrm.txt" \
