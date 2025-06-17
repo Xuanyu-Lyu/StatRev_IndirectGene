@@ -62,7 +62,7 @@ def main(gcta_grm_prefix):
 
     save_grm_binary(grm_oo, offspring_ids, f"{gcta_grm_prefix}_Ro_offspring", num_snps)
     save_grm_binary(grm_pp, offspring_ids, f"{gcta_grm_prefix}_Rp_parental", num_snps)
-    save_grm_binary(grm_op_sym, offspring_ids, f"{grm_grm_prefix}_Rop_cross", num_snps)
+    save_grm_binary(grm_op_sym, offspring_ids, f"{gcta_grm_prefix}_Rop_cross", num_snps)
     
     print("--- Finished partitioning GRM into BINARY format ---")
 
