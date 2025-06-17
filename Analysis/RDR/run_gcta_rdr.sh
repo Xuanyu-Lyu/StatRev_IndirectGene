@@ -86,9 +86,9 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     # Step 5: Create the multi-GRM input file (mgrm.txt)
     echo "Step 5: Creating multi-GRM file for N=${N}..."
     printf "%s \n" \
-    "grm_O"  \
-    "grm_P"  \
-    "grm_OP" \
+    "grm_combined_Ro_offspring"  \
+    "grm_combined_Rp_parental"  \
+    "grm_combined_Rop_cross" \
     > "${WORK_DIR}/mgrm.txt"
 
     # Step 6: Run Univariate GREML Analysis with 3 GRMs for each Trait
