@@ -10,7 +10,7 @@
 #SBATCH --job-name=gcta_rdr      # A specific name for this test job
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=5
 #SBATCH --mem=100G                      # Keep memory high as each task is still large
 #SBATCH --time=0-01:00:00               # 1-hour time limit is plenty for a 2-task test
 

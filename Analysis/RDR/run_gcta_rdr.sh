@@ -95,20 +95,20 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     echo ">>> Contents of ${WORK_DIR}/mgrm.txt:"
     cat "${WORK_DIR}/mgrm.txt"
     echo "Step 6: Running RDR GREML analysis for Trait 1 (Y1) with N=${N}..."
-    gcta64 --reml-no-lrt --mgrm-gz "${WORK_DIR}/mgrm.txt" \
+    gcta64 --reml-lrt 2 --mgrm-gz "${WORK_DIR}/mgrm.txt" \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 1 \
            --out "${OUTPUT_PREFIX}_Y1" \
            --reml-maxit 100 \
            --reml-priors 0.68 0.1 0.2 0.3 \
-           --thread-num 2 || echo "WARNING: GCTA for Y1 failed at N=${N}. Continuing to next step."
+           --thread-num 5 || echo "WARNING: GCTA for Y1 failed at N=${N}. Continuing to next step."
 
     # Step 7: Running RDR GREML analysis for Trait 2 (Y2) with N=${N}..."
-    gcta64 --reml-no-lrt --mgrm-gz "${WORK_DIR}/mgrm.txt" \
+    gcta64 --reml-lrt 2 --mgrm-gz "${WORK_DIR}/mgrm.txt" \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 2 \
            --out "${OUTPUT_PREFIX}_Y2" \
            --reml-maxit 100 \
            --reml-priors 0.68 0.1 0.2 0.3 \
-           --thread-num 2 || echo "WARNING: GCTA for Y2 failed at N=${N}. Continuing to next sample size."
+           --thread-num 5 || echo "WARNING: GCTA for Y2 failed at N=${N}. Continuing to next sample size."
 
     echo "--- Finished analysis for N=${N}. Cleaning up intermediate files. ---"
     # rm -rf ${WORK_DIR}
