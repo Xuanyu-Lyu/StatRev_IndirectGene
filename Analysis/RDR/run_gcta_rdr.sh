@@ -32,7 +32,7 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     python prepare_combined_plink.py ${RUN_FOLDER} ${WORK_DIR} ${N}
     
     # Step 2: Create PLINK binary file from the subsampled data
-    plink --file "${WORK_DIR}/combined_genos" --make-bed --out "${WORK_DIR}/combined_plink" --noweb
+    plink --file "${WORK_DIR}/combined_genos" --make-bed --out "${WORK_DIR}/combined_plink" --noweb --allow-no-sex
 
     # Step 3: Calculate the large combined GRM for the subsample
     echo "Step 3: Calculating combined GRM for N=${N}..."
@@ -41,6 +41,10 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     # Step 4: Partition the GRM into the three RDR components
     echo "Step 4: Partitioning GRM for N=${N}..."
     python partition_grm.py "${WORK_DIR}/grm_combined"
+    for comp in Ro_offspring Rp_parental Rop_cross; do
+        gzip -d -c "${WORK_DIR}/grm_combined_${comp}.grm.gz" \
+            > "${WORK_DIR}/grm_combined_${comp}.grm"
+    done
 
     # Step 5: Create the multi-GRM input file (mgrm.txt)
     echo "Step 5: Creating multi-GRM file for N=${N}..."
@@ -49,7 +53,7 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     "grm_P" "${WORK_DIR}/grm_combined_Rp_parental" \
     "grm_OP" "${WORK_DIR}/grm_combined_Rop_cross" \
     > "${WORK_DIR}/mgrm.txt"
-    
+
     # Step 6: Run Univariate GREML Analysis with 3 GRMs for each Trait
     echo "Step 6: Running RDR GREML analysis for Trait 1 (Y1) with N=${N}..."
     gcta64 --reml --mgrm "${WORK_DIR}/mgrm.txt" \
