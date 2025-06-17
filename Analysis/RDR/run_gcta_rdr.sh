@@ -44,9 +44,9 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
 
     # Step 5: Create the multi-GRM input file (mgrm.txt)
     echo "Step 5: Creating multi-GRM file for N=${N}..."
-    echo -e "grm_O\n${WORK_DIR}/grm_combined_Ro_offspring" > "${WORK_DIR}/mgrm.txt"
-    echo -e "grm_P\n${WORK_DIR}/grm_combined_Rp_parental" >> "${WORK_DIR}/mgrm.txt"
-    echo -e "grm_OP\n${WORK_DIR}/grm_combined_Rop_cross" >> "${WORK_DIR}/mgrm.txt"
+    echo "grm_O ${WORK_DIR}/grm_combined_Ro_offspring" > "${WORK_DIR}/mgrm.txt"
+    echo "grm_P ${WORK_DIR}/grm_combined_Rp_parental" >> "${WORK_DIR}/mgrm.txt"
+    echo "g_OP ${WORK_DIR}/grm_combined_Rop_cross" >> "${WORK_DIR}/mgrm.txt"
 
     # Step 6: Run Univariate GREML Analysis with 3 GRMs for each Trait
     echo "Step 6: Running RDR GREML analysis for Trait 1 (Y1) with N=${N}..."
@@ -56,14 +56,16 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
            --reml-maxit 100 \
            --thread-num 2
 
-    echo "Step 7: Running RDR GREML analysis for Trait 2 (Y2) with N=${N}..."
+    # Step 7: Running RDR GREML analysis for Trait 2 (Y2) with N=${N}..."
     gcta64 --reml --mgrm "${WORK_DIR}/mgrm.txt" \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 2 \
            --out "${OUTPUT_PREFIX}_Y2" \
            --reml-maxit 100 \
            --thread-num 2
            
-    echo "--- Finished analysis for N=${N} ---"
+    echo "--- Finished analysis for N=${N}. Cleaning up intermediate files. ---"
+    rm -rf ${WORK_DIR}
+           
 done
 
 echo "--- All sample sizes for ${RUN_ID} complete. ---"
