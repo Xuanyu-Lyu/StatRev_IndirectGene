@@ -5,18 +5,27 @@ import pandas as pd
 import sys
 import gzip
 
-def save_grm_text(grm_matrix, id_df, output_prefix):
-    """Saves a GRM in GCTA's zipped text format."""
-    n = grm_matrix.shape[0]
+
+def save_grm_text(grm_matrix, id_df, output_prefix, num_snps):
+    """Saves a GRM in GCTA’s zipped text format.
+
+    grm_matrix : numpy array, shape (N,N)
+    id_df      : pandas DataFrame with your sample IDs (two columns: FID IID)
+    output_prefix : path/to/output/prefix (no extension)
+    num_snps   : int, the number of SNPs used to build the GRM
+    """
+    N = grm_matrix.shape[0]
+    # write the .grm.id
     id_df.to_csv(f"{output_prefix}.grm.id", sep='\t', header=False, index=False)
-    
-    grm_text_data = []
-    indices = np.tril_indices(n)
-    for i, j in zip(indices[0], indices[1]):
-        grm_text_data.append(f"{i+1}\t{j+1}\t{n}\t{grm_matrix[i, j]}")
-        
+
+    # write the zipped text GRM
     with gzip.open(f"{output_prefix}.grm.gz", "wt") as f:
-        f.write("\n".join(grm_text_data))
+        # np.tril_indices includes the diagonal (i>=j)
+        rows, cols = np.tril_indices(N)
+        for i, j in zip(rows, cols):
+            # +1 to convert 0-based python → 1-based GCTA
+            f.write(f"{i+1}\t{j+1}\t{num_snps}\t{grm_matrix[i, j]}\n")
+
     print(f"Saved text GRM: {output_prefix}.grm.gz and .grm.id")
 
 def main(gcta_grm_prefix):
@@ -26,7 +35,9 @@ def main(gcta_grm_prefix):
     # 1. Load the GCTA-generated GRM files
     grm_id = pd.read_csv(f"{gcta_grm_prefix}.grm.id", sep='\t', header=None, names=['FID', 'IID'])
     grm_bin = np.fromfile(f"{gcta_grm_prefix}.grm.bin", dtype=np.float32)
-    
+    with open(f"{gcta_grm_prefix}.grm.N.bin", "rb") as fh:
+        snp_counts = np.fromfile(fh, dtype=np.int32).reshape(n, n)
+
     # 2. Reconstruct the full 2N x 2N matrix
     n_total = len(grm_id)
     tril_indices = np.tril_indices(n_total)
@@ -48,10 +59,11 @@ def main(gcta_grm_prefix):
     
     # 5. Save the three final N x N matrices in GCTA text format
     offspring_ids = grm_id.iloc[0:n_offspring]
-    
-    save_grm_text(grm_oo, offspring_ids, f"{gcta_grm_prefix}_Ro_offspring")
-    save_grm_text(grm_pp, offspring_ids, f"{gcta_grm_prefix}_Rp_parental")
-    save_grm_text(grm_op_sym, offspring_ids, f"{gcta_grm_prefix}_Rop_cross")
+    global_M = snp_counts[0,0]
+
+    save_grm_text(grm_oo, offspring_ids, f"{gcta_grm_prefix}_Ro_offspring", global_M)
+    save_grm_text(grm_pp, offspring_ids, f"{gcta_grm_prefix}_Rp_parental", global_M)
+    save_grm_text(grm_op_sym, offspring_ids, f"{gcta_grm_prefix}_Rop_cross", global_M)
     
     print("--- Finished partitioning GRM ---")
 
