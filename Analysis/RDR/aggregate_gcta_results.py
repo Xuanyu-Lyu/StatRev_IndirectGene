@@ -1,32 +1,57 @@
-# File: aggregate_gcta_results.py
 import os
 import glob
 import pandas as pd
+import re
 
 def parse_hsq_file(filepath):
-    """Parses a GCTA .hsq file to extract variance estimates and SEs."""
+    """
+    Parses a GCTA .hsq file to extract variance estimates and SEs.
+    This version robustly handles sources with spaces and special 2-column lines.
+    """
     results = {}
     try:
         with open(filepath, 'r') as f:
             for line in f:
-                parts = line.strip().split('\t')
-                if len(parts) == 3:
-                    source, estimate, se = parts
-                    # Standardize keys for easy access, e.g., 'V(G1)/Vp' -> 'h2_G1'
-                    clean_key = source.replace('/', '_').replace('(', '').replace(')', '')
-                    results[f"{clean_key}_est"] = float(estimate)
-                    results[f"{clean_key}_se"] = float(se)
+                line = line.strip()
+                if not line:
+                    continue
+
+                # Use rsplit to handle sources that contain spaces, like "Sum of V(G)/Vp"
+                # It splits from the right at most 2 times.
+                parts = line.rsplit(None, 2)
+                
+                try:
+                    # Handle standard 3-column variance estimate lines
+                    if len(parts) == 3:
+                        source, estimate, se = parts
+                        est_val = float(estimate)
+                        se_val = float(se)
+                        
+                        clean_key = source.replace('/', '_').replace('(', '').replace(')', '').replace(' ', '_')
+                        results[f"{clean_key}_est"] = est_val
+                        results[f"{clean_key}_se"] = se_val
+
+                    # Handle special 2-column lines like logL and n
+                    elif len(parts) == 2:
+                        key, value = parts
+                        val = float(value)
+                        
+                        if key.lower() == 'logl':
+                            results['logL'] = val
+                        elif key.lower() == 'n':
+                            results['n_from_file'] = val
+
+                except (ValueError, IndexError):
+                    # This will skip the header or any other malformed lines
+                    continue
     except Exception as e:
-        print(f"Could not parse file {filepath}: {e}")
+        print(f"Could not read or process file {filepath}: {e}")
     return results
 
 def main():
-    # Directory where your final .hsq files are saved
     RESULTS_DIR = "/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/"
-    
     all_results = []
     
-    # Find all .hsq files recursively
     hsq_files = glob.glob(os.path.join(RESULTS_DIR, "**", "*.hsq"), recursive=True)
     
     if not hsq_files:
@@ -36,34 +61,45 @@ def main():
     print(f"Found {len(hsq_files)} result files to aggregate.")
 
     for f in hsq_files:
-        basename = os.path.basename(f)
-        parts = basename.split('_')
-        
-        # Extract info from filename, e.g., "run_001_N2000_Y1_results.hsq"
-        condition = os.path.basename(os.path.dirname(f))
-        run_id = int(parts[1])
-        sample_size = int(parts[2].replace('N',''))
-        trait = parts[3]
-        
-        parsed_data = parse_hsq_file(f)
-        
-        if parsed_data:
-            base_info = {
-                'condition': condition,
-                'replication': run_id,
-                'sample_size': sample_size,
-                'trait': trait
-            }
-            all_results.append({**base_info, **parsed_data})
+        try:
+            basename = os.path.basename(f)
+            dirname = os.path.basename(os.path.dirname(f))
             
-    # Create a final DataFrame and save it
+            parts = basename.replace('.hsq', '').split('_')
+            
+            condition = dirname
+            run_id = int(parts[1])
+            sample_size = int(parts[2].replace('N',''))
+            trait = parts[3]
+            
+            parsed_data = parse_hsq_file(f)
+            
+            if parsed_data:
+                base_info = {
+                    'condition': condition,
+                    'replication': run_id,
+                    'sample_size': sample_size,
+                    'trait': trait
+                }
+                all_results.append({**base_info, **parsed_data})
+        except (IndexError, ValueError) as e:
+            print(f"Warning: Could not parse filename metadata for '{f}'. Error: {e}. Skipping.")
+            continue
+            
+    # CRITICAL CHECK: Ensure results were actually found before creating a DataFrame
+    if not all_results:
+        print("\nAggregation complete, but no valid GCTA result files could be parsed.")
+        print("Please check file contents and naming conventions.")
+        return
+
     final_df = pd.DataFrame(all_results)
     final_df.sort_values(by=['condition', 'trait', 'sample_size', 'replication'], inplace=True)
 
-    output_path = os.path.join("/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/", "aggregated_rdr_gcta_results.tsv")
-    final_df.to_csv(output_path, sep='\t', index=False)
+    output_path = os.path.join(RESULTS_DIR, "aggregated_rdr_gcta_results.tsv")
+    final_df.to_csv(output_path, sep='\t', index=False, float_format='%.6f')
     
-    print(f"\nAggregation complete. Final results table saved to:\n{output_path}")
+    print(f"\nAggregation complete. {len(final_df)} results aggregated.")
+    print(f"Final results table saved to:\n{output_path}")
 
 if __name__ == '__main__':
     main()
