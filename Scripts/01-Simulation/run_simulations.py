@@ -100,7 +100,7 @@ def main():
     f_mat_condition_B = np.array([[0,0],[0,0]]); s_mat_condition_B = np.array([[.10,.15],[.05,.15]])
     simulation_conditions = [
         #{"condition_name": "phenoVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
-        #{"condition_name": "socialVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
+        #s{"condition_name": "socialVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
         {"condition_name": "phenoVT_socialAM", "simulation_params": {**base_params, "mating_type": "social", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
         {"condition_name": "phenoVT_geneticAM", "simulation_params": {**base_params, "mating_type": "genetic", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}}
     ]

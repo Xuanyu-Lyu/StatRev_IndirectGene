@@ -3,30 +3,25 @@
 import numpy as np
 import pandas as pd
 import sys
-import gzip
 
-
-def save_grm_text(grm_matrix, id_df, output_prefix, num_snps):
-    """Saves a GRM in GCTA’s zipped text format.
-
-    grm_matrix : numpy array, shape (N,N)
-    id_df      : pandas DataFrame with your sample IDs (two columns: FID IID)
-    output_prefix : path/to/output/prefix (no extension)
-    num_snps   : int, the number of SNPs used to build the GRM
-    """
+def save_grm_binary(grm_matrix, id_df, output_prefix, num_snps):
+    """Saves a GRM in GCTA’s binary format."""
     N = grm_matrix.shape[0]
-    # write the .grm.id
+    
+    # 1. Write the .grm.id file
     id_df.to_csv(f"{output_prefix}.grm.id", sep='\t', header=False, index=False)
 
-    # write the zipped text GRM
-    with gzip.open(f"{output_prefix}.grm.gz", "wt") as f:
-        # np.tril_indices includes the diagonal (i>=j)
-        rows, cols = np.tril_indices(N)
-        for i, j in zip(rows, cols):
-            # +1 to convert 0-based python → 1-based GCTA
-            f.write(f"{i+1}\t{j+1}\t{num_snps}\t{grm_matrix[i, j]}\n")
+    # 2. Write the .grm.bin file (lower triangle elements as float32)
+    tril_indices = np.tril_indices(N)
+    grm_values = grm_matrix[tril_indices]
+    grm_values.astype(np.float32).tofile(f"{output_prefix}.grm.bin")
 
-    print(f"Saved text GRM: {output_prefix}.grm.gz and .grm.id")
+    # 3. Write the .grm.N.bin file (number of SNPs for each element)
+    num_elements = len(grm_values)
+    n_snps_array = np.full(num_elements, num_snps, dtype=np.float32)
+    n_snps_array.tofile(f"{output_prefix}.grm.N.bin")
+
+    print(f"Saved BINARY GRM: {output_prefix}.grm.bin, .grm.N.bin, and .grm.id")
 
 def main(gcta_grm_prefix):
     """Reads a large GCTA GRM and partitions it into RDR components."""
@@ -40,30 +35,39 @@ def main(gcta_grm_prefix):
     n_total = len(grm_id)
     tril_indices = np.tril_indices(n_total)
     full_grm = np.zeros((n_total, n_total), dtype=np.float32)
+    
+    if len(grm_bin) != len(tril_indices[0]):
+        print(f"ERROR: Size mismatch. Expected {len(tril_indices[0])} elements in .grm.bin but found {len(grm_bin)}.")
+        sys.exit(1)
+        
     full_grm[tril_indices] = grm_bin
     full_grm = full_grm + full_grm.T - np.diag(np.diag(full_grm))
     
     # 3. Split the matrix into four blocks
-    # Assumes the first N individuals are offspring and the next N are parents
     n_offspring = n_total // 2
     
     grm_oo = full_grm[0:n_offspring, 0:n_offspring]
     grm_op = full_grm[0:n_offspring, n_offspring:]
-    grm_po = full_grm[n_offspring:, 0:n_offspring] # This is grm_op.T
+    grm_po = full_grm[n_offspring:, 0:n_offspring]
     grm_pp = full_grm[n_offspring:, n_offspring:]
 
     # 4. Symmetrize the cross-term
     grm_op_sym = (grm_op + grm_po) / 2.0
     
-    # 5. Save the three final N x N matrices in GCTA text format
+    # 5. Save the three final N x N matrices in GCTA binary format
     offspring_ids = grm_id.iloc[0:n_offspring]
-    global_M = 300
-
-    save_grm_text(grm_oo, offspring_ids, f"{gcta_grm_prefix}_Ro_offspring", global_M)
-    save_grm_text(grm_pp, offspring_ids, f"{gcta_grm_prefix}_Rp_parental", global_M)
-    save_grm_text(grm_op_sym, offspring_ids, f"{gcta_grm_prefix}_Rop_cross", global_M)
     
-    print("--- Finished partitioning GRM ---")
+    # FIX: The log indicates 600 SNPs were used.
+    num_snps = 600
+
+    save_grm_binary(grm_oo, offspring_ids, f"{gcta_grm_prefix}_Ro_offspring", num_snps)
+    save_grm_binary(grm_pp, offspring_ids, f"{gcta_grm_prefix}_Rp_parental", num_snps)
+    save_grm_binary(grm_op_sym, offspring_ids, f"{grm_grm_prefix}_Rop_cross", num_snps)
+    
+    print("--- Finished partitioning GRM into BINARY format ---")
 
 if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print("Usage: python partition_grm.py <gcta_grm_prefix>")
+        sys.exit(1)
     main(sys.argv[1])

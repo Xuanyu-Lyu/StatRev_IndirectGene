@@ -15,7 +15,7 @@
 
 # --- Define the array size for the test ---
 # *** MODIFIED: Only run the first 2 tasks of the array ***
-#SBATCH --array=1-1000%25
+#SBATCH --array=1-25%25
 
 # --- Dynamic Job Name and Log File Settings ---
 # The job name and log files are set dynamically using the CONDITION_NAME variable.
@@ -63,7 +63,7 @@ BASE_SIM_DIR="/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final/${CO
 RUN_FOLDER=$(find ${BASE_SIM_DIR} -mindepth 1 -maxdepth 1 -type d | sort | sed -n "${SLURM_ARRAY_TASK_ID}p")
 
 # Define the final, permanent directory for the test results
-FINAL_RESULTS_DIR="/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/Tests/${CONDITION_NAME}"
+FINAL_RESULTS_DIR="/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/${CONDITION_NAME}"
 
 if [ -z "${RUN_FOLDER}" ]; then
     echo "Error: Could not find a run folder for task ID ${SLURM_ARRAY_TASK_ID}. Exiting."
