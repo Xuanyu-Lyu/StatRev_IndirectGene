@@ -35,8 +35,6 @@ def main(gcta_grm_prefix):
     # 1. Load the GCTA-generated GRM files
     grm_id = pd.read_csv(f"{gcta_grm_prefix}.grm.id", sep='\t', header=None, names=['FID', 'IID'])
     grm_bin = np.fromfile(f"{gcta_grm_prefix}.grm.bin", dtype=np.float32)
-    with open(f"{gcta_grm_prefix}.grm.N.bin", "rb") as fh:
-        snp_counts = np.fromfile(fh, dtype=np.int32).reshape(n, n)
 
     # 2. Reconstruct the full 2N x 2N matrix
     n_total = len(grm_id)
@@ -59,7 +57,7 @@ def main(gcta_grm_prefix):
     
     # 5. Save the three final N x N matrices in GCTA text format
     offspring_ids = grm_id.iloc[0:n_offspring]
-    global_M = snp_counts[0,0]
+    global_M = 300
 
     save_grm_text(grm_oo, offspring_ids, f"{gcta_grm_prefix}_Ro_offspring", global_M)
     save_grm_text(grm_pp, offspring_ids, f"{gcta_grm_prefix}_Rp_parental", global_M)
