@@ -25,6 +25,9 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     OUTPUT_PREFIX="${FINAL_RESULTS_DIR}/${RUN_ID}_N${N}"
     
     mkdir -p ${WORK_DIR}
+    echo ">>> WORK_DIR is now: ${WORK_DIR}"
+    ls -ld "${RUN_FOLDER}/gcta_analysis"
+
     mkdir -p ${FINAL_RESULTS_DIR}
 
     # Step 1: Prepare inputs for this specific subsample, passing N as an argument
@@ -41,10 +44,25 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     # Step 4: Partition the GRM into the three RDR components
     echo "Step 4: Partitioning GRM for N=${N}..."
     python partition_grm.py "${WORK_DIR}/grm_combined"
+    echo ">>> Checking for partitioned GRMs:"
     for comp in Ro_offspring Rp_parental Rop_cross; do
-        gzip -d -c "${WORK_DIR}/grm_combined_${comp}.grm.gz" \
-            > "${WORK_DIR}/grm_combined_${comp}.grm"
+    gzfile="${WORK_DIR}/grm_combined_${comp}.grm.gz"
+    if [[ -f "$gzfile" ]]; then
+        echo "    found: $gzfile"
+    else
+        echo "ERROR: missing $gzfile — partition_grm.py didn’t write it!"
+        exit 1
+    fi
     done
+
+    echo ">>> Decompressing text GRMs for GCTA multi‐GRM:"
+    for comp in Ro_offspring Rp_parental Rop_cross; do
+    gzfile="${WORK_DIR}/grm_combined_${comp}.grm.gz"
+    grmfile="${WORK_DIR}/grm_combined_${comp}.grm"
+    gzip -dc "$gzfile" > "$grmfile"
+    echo "    decompressed $gzfile → $grmfile"
+    done
+
 
     # Step 5: Create the multi-GRM input file (mgrm.txt)
     echo "Step 5: Creating multi-GRM file for N=${N}..."
@@ -55,6 +73,8 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     > "${WORK_DIR}/mgrm.txt"
 
     # Step 6: Run Univariate GREML Analysis with 3 GRMs for each Trait
+    echo ">>> Contents of ${WORK_DIR}/mgrm.txt:"
+    cat "${WORK_DIR}/mgrm.txt"
     echo "Step 6: Running RDR GREML analysis for Trait 1 (Y1) with N=${N}..."
     gcta64 --reml --mgrm "${WORK_DIR}/mgrm.txt" \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 1 \
@@ -70,7 +90,7 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
            --thread-num 2
            
     echo "--- Finished analysis for N=${N}. Cleaning up intermediate files. ---"
-    rm -rf ${WORK_DIR}
+    # rm -rf ${WORK_DIR}
            
 done
 
