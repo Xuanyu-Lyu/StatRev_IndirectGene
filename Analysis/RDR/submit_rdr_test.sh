@@ -10,7 +10,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=5
-#SBATCH --mem=64G                      # Keep memory high as each task is still large
+#SBATCH --mem=128G                      # Keep memory high as each task is still large
 #SBATCH --time=0-20:00:00               # 20-hour time limit is plenty for a 2-task test
 
 # --- Define the array size for the test ---
