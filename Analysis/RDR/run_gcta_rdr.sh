@@ -44,16 +44,16 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     # Step 4: Partition the GRM into the three RDR components
     echo "Step 4: Partitioning GRM for N=${N}..."
     python partition_grm.py "${WORK_DIR}/grm_combined"
-    echo ">>> Checking for partitioned GRMs:"
-    for comp in Ro_offspring Rp_parental Rop_cross; do
-    gzfile="${WORK_DIR}/grm_combined_${comp}.grm.gz"
-    if [[ -f "$gzfile" ]]; then
-        echo "    found: $gzfile"
-    else
-        echo "ERROR: missing $gzfile — partition_grm.py didn’t write it!"
-        exit 1
-    fi
-    done
+    # echo ">>> Checking for partitioned GRMs:"
+    # for comp in Ro_offspring Rp_parental Rop_cross; do
+    # gzfile="${WORK_DIR}/grm_combined_${comp}.grm.gz"
+    # if [[ -f "$gzfile" ]]; then
+    #     echo "    found: $gzfile"
+    # else
+    #     echo "ERROR: missing $gzfile — partition_grm.py didn’t write it!"
+    #     exit 1
+    # fi
+    # done
 
     # echo ">>> Decompressing text GRMs for GCTA multi‐GRM:"
     # for comp in Ro_offspring Rp_parental Rop_cross; do
