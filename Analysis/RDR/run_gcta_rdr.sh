@@ -99,14 +99,14 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 1 \
            --out "${OUTPUT_PREFIX}_Y1" \
            --reml-maxit 100 \
-           --thread-num 2
+           --thread-num 2 || echo "WARNING: GCTA for Y1 failed at N=${N}. Continuing to next step."
 
     # Step 7: Running RDR GREML analysis for Trait 2 (Y2) with N=${N}..."
     gcta64 --reml-lrt 2 --mgrm-gz "${WORK_DIR}/mgrm.txt" \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 2 \
            --out "${OUTPUT_PREFIX}_Y2" \
            --reml-maxit 100 \
-           --thread-num 2
+           --thread-num 2 || echo "WARNING: GCTA for Y2 failed at N=${N}. Continuing to next sample size."
            
     echo "--- Finished analysis for N=${N}. Cleaning up intermediate files. ---"
     # rm -rf ${WORK_DIR}
