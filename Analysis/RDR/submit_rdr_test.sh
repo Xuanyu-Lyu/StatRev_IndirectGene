@@ -39,7 +39,7 @@ chmod +x prepare_combined_plink.py
 chmod +x partition_grm.py
 
 # --- Map Slurm Task ID to an input folder ---
-CONDITION_NAME="phenoVT_phenoAM"
+CONDITION_NAME="socialVT_phenoAM"
 BASE_SIM_DIR="/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final/${CONDITION_NAME}"
 RUN_FOLDER=$(find ${BASE_SIM_DIR} -mindepth 1 -maxdepth 1 -type d | sort | sed -n "${SLURM_ARRAY_TASK_ID}p")
 
