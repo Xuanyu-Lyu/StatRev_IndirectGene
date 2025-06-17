@@ -95,7 +95,8 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     echo ">>> Contents of ${WORK_DIR}/mgrm.txt:"
     cat "${WORK_DIR}/mgrm.txt"
     echo "Step 6: Running RDR GREML analysis for Trait 1 (Y1) with N=${N}..."
-    gcta64 --reml-lrt 2 --mgrm-gz "${WORK_DIR}/mgrm.txt" \
+    gcta64 --reml --mgrm-gz "${WORK_DIR}/mgrm.txt" \
+           --reml-no-lrt \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 1 \
            --out "${OUTPUT_PREFIX}_Y1" \
            --reml-maxit 100 \
@@ -103,7 +104,8 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
            --thread-num 5 || echo "WARNING: GCTA for Y1 failed at N=${N}. Continuing to next step."
 
     # Step 7: Running RDR GREML analysis for Trait 2 (Y2) with N=${N}..."
-    gcta64 --reml-lrt 2 --mgrm-gz "${WORK_DIR}/mgrm.txt" \
+    gcta64 --reml --mgrm-gz "${WORK_DIR}/mgrm.txt" \
+           --reml-no-lrt \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 2 \
            --out "${OUTPUT_PREFIX}_Y2" \
            --reml-maxit 100 \
