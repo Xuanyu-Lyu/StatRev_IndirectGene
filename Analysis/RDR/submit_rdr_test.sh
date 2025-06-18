@@ -16,9 +16,9 @@
 # --- Define the array size for the test ---
 #SBATCH --array=1-1000%25
 
-#SBATCH --job-name=gcta_rdr_phenoVT_phenoAM  # A specific name for this test job
-#SBATCH --output=slurm_logs/gcta_rdr_phenoVT_phenoAM_%A_%a.out
-#SBATCH --error=slurm_logs/gcta_rdr_phenoVT_phenoAM_%A_%a.err
+#SBATCH --job-name=gcta_rdr_socialVT_phenoAM  # A specific name for this test job
+#SBATCH --output=slurm_logs/gcta_rdr_socialVT_phenoAM_%A_%a.out
+#SBATCH --error=slurm_logs/gcta_rdr_socialVT_phenoAM_%A_%a.err
 
 #
 # --- Start of Job Commands ---
@@ -40,7 +40,7 @@ chmod +x prepare_grm_noGCTA.py
 #chmod +x partition_grm.py
 
 # --- Map Slurm Task ID to an input folder ---
-CONDITION_NAME="phenoVT_phenoAM"
+CONDITION_NAME="socialVT_phenoAM"
 BASE_SIM_DIR="/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final/${CONDITION_NAME}"
 RUN_FOLDER=$(find ${BASE_SIM_DIR} -mindepth 1 -maxdepth 1 -type d | sort | sed -n "${SLURM_ARRAY_TASK_ID}p")
 
