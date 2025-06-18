@@ -11,14 +11,14 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=128G                      # Keep memory high as each task is still large
-#SBATCH --time=0-12:00:00               # 20-hour time limit is plenty for a 2-task test
+#SBATCH --time=0-8:00:00               # 20-hour time limit is plenty for a 2-task test
 
 # --- Define the array size for the test ---
 #SBATCH --array=1-1000%25
 
-#SBATCH --job-name=gcta_rdr_phenoVT_socialAM  # A specific name for this test job
-#SBATCH --output=slurm_logs/gcta_rdr_phenoVT_socialAM_%A_%a.out
-#SBATCH --error=slurm_logs/gcta_rdr_phenoVT_socialAM_%A_%a.err
+#SBATCH --job-name=gcta_rdr_phenoVT_geneticAM  # A specific name for this test job
+#SBATCH --output=slurm_logs/gcta_rdr_phenoVT_geneticAM_%A_%a.out
+#SBATCH --error=slurm_logs/gcta_rdr_phenoVT_geneticAM_%A_%a.err
 
 #
 # --- Start of Job Commands ---
@@ -40,7 +40,7 @@ chmod +x prepare_grm_noGCTA.py
 #chmod +x partition_grm.py
 
 # --- Map Slurm Task ID to an input folder ---
-CONDITION_NAME="phenoVT_socialAM"
+CONDITION_NAME="phenoVT_geneticAM"
 BASE_SIM_DIR="/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final/${CONDITION_NAME}"
 RUN_FOLDER=$(find ${BASE_SIM_DIR} -mindepth 1 -maxdepth 1 -type d | sort | sed -n "${SLURM_ARRAY_TASK_ID}p")
 
