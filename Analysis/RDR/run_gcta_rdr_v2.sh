@@ -13,7 +13,7 @@ RUN_ID=$(basename ${RUN_FOLDER})
 # Make the new script executable
 chmod +x prepare_grm_noGCTA.py
 
-TARGET_SAMPLE_SIZES=(8000 16000)
+TARGET_SAMPLE_SIZES=(8000)
 
 echo "--- Starting RDR analysis for ${RUN_ID} using custom GRM calculation ---"
 echo "Analysis started at: $(date)"
@@ -64,11 +64,10 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     
     gcta64 --reml --mgrm "${WORK_DIR}/mgrm.txt" \
            --reml-no-lrt \
-           --reml-no-constrain \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 1 \
            --out "${OUTPUT_PREFIX}_Y1" \
            --reml-maxit 100 \
-           --thread-num 5 || echo "WARNING: GCTA for Y1 failed at N=${N}."
+           --thread-num 8 || echo "WARNING: GCTA for Y1 failed at N=${N}."
     
     STEP3A_END_TIME=$(date +%s)
     STEP3A_DURATION=$((STEP3A_END_TIME - STEP3A_START_TIME))
@@ -79,11 +78,10 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     
     gcta64 --reml --mgrm "${WORK_DIR}/mgrm.txt" \
            --reml-no-lrt \
-           --reml-no-constrain \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 2 \
            --out "${OUTPUT_PREFIX}_Y2" \
            --reml-maxit 100 \
-           --thread-num 5 || echo "WARNING: GCTA for Y2 failed at N=${N}."
+           --thread-num 8 || echo "WARNING: GCTA for Y2 failed at N=${N}."
 
     STEP3B_END_TIME=$(date +%s)
     STEP3B_DURATION=$((STEP3B_END_TIME - STEP3B_START_TIME))

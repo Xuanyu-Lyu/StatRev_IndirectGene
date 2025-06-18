@@ -9,7 +9,7 @@
 # Time and memory are reduced for a quicker test.
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=5
+#SBATCH --cpus-per-task=8
 #SBATCH --mem=128G                      # Keep memory high as each task is still large
 #SBATCH --time=0-12:00:00               # 20-hour time limit is plenty for a 2-task test
 
@@ -45,7 +45,7 @@ BASE_SIM_DIR="/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final/${CO
 RUN_FOLDER=$(find ${BASE_SIM_DIR} -mindepth 1 -maxdepth 1 -type d | sort | sed -n "${SLURM_ARRAY_TASK_ID}p")
 
 # Define the final, permanent directory for the test results
-FINAL_RESULTS_DIR="/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/Tests/${CONDITION_NAME}"
+FINAL_RESULTS_DIR="/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/${CONDITION_NAME}"
 
 if [ -z "${RUN_FOLDER}" ]; then
     echo "Error: Could not find a run folder for task ID ${SLURM_ARRAY_TASK_ID}. Exiting."
