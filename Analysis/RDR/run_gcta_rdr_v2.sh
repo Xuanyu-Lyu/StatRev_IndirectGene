@@ -13,7 +13,7 @@ RUN_ID=$(basename ${RUN_FOLDER})
 # Make the new script executable
 chmod +x prepare_grm_noGCTA.py
 
-TARGET_SAMPLE_SIZES=(2000 4000 8000 16000 32000)
+TARGET_SAMPLE_SIZES=(8000 16000)
 
 echo "--- Starting RDR analysis for ${RUN_ID} using custom GRM calculation ---"
 echo "Analysis started at: $(date)"
@@ -98,7 +98,7 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     echo "  - Step 3a (Y1 GREML): ${STEP3A_DURATION}s"
     echo "  - Step 3b (Y2 GREML): ${STEP3B_DURATION}s"
     
-    # rm -rf ${WORK_DIR} # Keep cleanup commented for debugging
+     rm -rf ${WORK_DIR} # Keep cleanup commented for debugging
 done
 
 SCRIPT_END_TIME=$(date +%s)
