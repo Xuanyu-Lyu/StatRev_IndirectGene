@@ -14,7 +14,7 @@
 #SBATCH --time=0-2:00:00               # 20-hour time limit is plenty for a 2-task test
 
 # --- Define the array size for the test ---
-#SBATCH --array=1-1
+#SBATCH --array=2-2
 
 #SBATCH --job-name=gcta_rdr_socialVT_phenoAM  # A specific name for this test job
 #SBATCH --output=slurm_logs/gcta_rdr_socialVT_phenoAM_%A_%a.out
