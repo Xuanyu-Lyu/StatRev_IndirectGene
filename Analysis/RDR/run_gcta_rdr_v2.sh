@@ -13,7 +13,7 @@ RUN_ID=$(basename ${RUN_FOLDER})
 # Make the new script executable
 chmod +x prepare_grm_noGCTA.py
 
-TARGET_SAMPLE_SIZES=(8000)
+TARGET_SAMPLE_SIZES=(2000 4000 8000 16000)
 
 echo "--- Starting RDR analysis for ${RUN_ID} using custom GRM calculation ---"
 echo "Analysis started at: $(date)"
