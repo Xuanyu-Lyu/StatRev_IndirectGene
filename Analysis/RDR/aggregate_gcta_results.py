@@ -49,7 +49,7 @@ def parse_hsq_file(filepath):
     return results
 
 def main():
-    RESULTS_DIR = "/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/Tests"
+    RESULTS_DIR = "/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results"
     all_results = []
     
     hsq_files = glob.glob(os.path.join(RESULTS_DIR, "**", "*.hsq"), recursive=True)
