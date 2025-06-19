@@ -6,6 +6,7 @@ import glob
 import multiprocessing
 import pandas as pd
 import numpy as np
+import re
 
 def _ensure_folder_exists(folder_path):
     if not os.path.exists(folder_path):
@@ -14,11 +15,10 @@ def _ensure_folder_exists(folder_path):
 # ... (other helper functions like _save_dataframe_to_tsv etc. can remain the same) ...
 
 
-# --- MODIFIED WORKER FUNCTION ---
 def process_single_run(task_params):
     """
     Worker function to process one simulation run folder for one target sample size.
-    Now includes more detailed print statements for debugging.
+    Uses regular expressions for precise matching of phenotype files.
     """
     condition_name = task_params['condition_name']
     run_folder_path = task_params['run_folder_path']
@@ -32,24 +32,41 @@ def process_single_run(task_params):
 
     try:
         if os.path.exists(output_filepath):
-            # This check is now less critical as main script handles it, but good for safety
             return f"Skipped: {output_filename} (already exists)"
 
-        # --- Debug Print 1: Stating the task ---
         print(f"  -> Worker starting on: {run_id} for n={target_n}")
 
-        phen_files = glob.glob(os.path.join(run_folder_path, "*_phen_gen*.tsv"))
-        if not phen_files:
-            return f"Failed: No phenotype files in {run_folder_path}"
+        # Use a broad glob to get potential files first
+        all_possible_files = glob.glob(os.path.join(run_folder_path, "*_phen_gen*.tsv"))
+        if not all_possible_files:
+            return f"Failed: No potentially matching phenotype files in {run_folder_path}"
 
-        final_gen_num = max([int(f.split('_gen')[1].split('.tsv')[0]) for f in phen_files])
-        final_gen_filepath = [f for f in phen_files if f"gen{final_gen_num}.tsv" in f][0]
+        # --- START: ROBUST PARSING WITH REGEX ---
+        valid_files = {} # Dictionary to map generation_number -> file_path
+        # This pattern specifically looks for "_gen", followed by one or more digits,
+        # right before the ".tsv" at the end of the filename.
+        pattern = re.compile(r'_gen(\d+)\.tsv$')
 
-        # --- Debug Print 2: Before reading the file ---
-        print(f"     Reading file: {final_gen_filepath}")
+        for f in all_possible_files:
+            match = pattern.search(f)
+            # If the filename matches the pattern...
+            if match:
+                # ...extract the number (the part in parentheses) and store it.
+                gen_num = int(match.group(1))
+                valid_files[gen_num] = f
+        
+        if not valid_files:
+            return (f"Failed: No files matching the required '_gen<NUMBER>.tsv' format "
+                    f"found in {run_folder_path}")
+        
+        # Find the highest generation number and its corresponding file path
+        final_gen_num = max(valid_files.keys())
+        final_gen_filepath = valid_files[final_gen_num]
+        # --- END: ROBUST PARSING WITH REGEX ---
+
+        print(f"     Reading file: {os.path.basename(final_gen_filepath)}")
         phen_df = pd.read_csv(final_gen_filepath, sep='\t')
         
-        # --- Debug Print 3: After reading, before processing ---
         print(f"     Read {len(phen_df)} rows. Processing...")
         
         cols_to_load = ['ID', 'Father.ID', 'Mother.ID'] + list(columns_to_extract.keys())
@@ -68,7 +85,6 @@ def process_single_run(task_params):
         
         _ensure_folder_exists(dest_folder)
         
-        # --- Debug Print 4: Before writing the file ---
         print(f"     Processing done. Writing to: {output_filepath}")
         final_df.to_csv(output_filepath, sep='\t', index=False, header=True)
         
