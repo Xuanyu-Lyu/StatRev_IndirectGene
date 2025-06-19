@@ -160,7 +160,7 @@ class AssortativeMatingSimulation:
 
         essential_params = {
             "num_generations": num_generations, "pop_size": pop_size,
-            "cove_mat": cove_mat, "f_mat": f_mat, 
+            "cove_mat": cove_mat, "f_mat": f_mat, "s_mat": s_mat,
             "a_mat": a_mat, "d_mat": d_mat,
             "am_list": am_list, "covy_mat": covy_mat, "k2_matrix": k2_matrix
         }

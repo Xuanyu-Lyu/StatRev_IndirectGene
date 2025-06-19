@@ -13,7 +13,7 @@
 
 # --- Define the total number of tasks for the array ---
 # CORRECTED: (2 conditions * 1000 reps) / 4 reps_per_task = 500 tasks
-#SBATCH --array=1-500%25
+#SBATCH --array=1-500%40
 
 # --- Your Job's Commands ---
 
