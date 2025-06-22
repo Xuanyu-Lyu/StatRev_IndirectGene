@@ -33,8 +33,8 @@ chmod +x prepare_grm_noGCTA.py
 
 # --- Define the list of conditions to run ---
 CONDITIONS=(
-    "phenoVT_phenoAM"
-    #"socialVT_phenoAM"
+    #"phenoVT_phenoAM"
+    "socialVT_phenoAM"
     #"phenoVT_socialAM"
     #"phenoVT_geneticAM"
 )
