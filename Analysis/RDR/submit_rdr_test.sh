@@ -45,11 +45,11 @@ for CONDITION_NAME in "${CONDITIONS[@]}"; do
     echo "--- Starting condition: ${CONDITION_NAME} for Slurm Task ID ${SLURM_ARRAY_TASK_ID} ---"
     echo "================================================="
 
-    BASE_SIM_DIR="/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final/Tests/${CONDITION_NAME}"
+    BASE_SIM_DIR="/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final/${CONDITION_NAME}"
     RUN_FOLDER=$(find "${BASE_SIM_DIR}" -mindepth 1 -maxdepth 1 -type d | sort | sed -n "${SLURM_ARRAY_TASK_ID}p")
     
     # Define the final, permanent directory for results
-    FINAL_RESULTS_DIR="/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/${CONDITION_NAME}"
+    FINAL_RESULTS_DIR="/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/VarTests/${CONDITION_NAME}"
 
     if [ -z "${RUN_FOLDER}" ]; then
         echo "Error: Could not find a run folder for task ID ${SLURM_ARRAY_TASK_ID} in condition ${CONDITION_NAME}. Skipping to next condition."
