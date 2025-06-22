@@ -1,7 +1,7 @@
 source("Analysis/BiSEMPGS/04-OpenMxFunctions.R")
 library(crayon)
-conditionNames <- c("phenotypic_transmission", "social_transmission")
-v_sample <- c(.4e4,.8e4 ,1.6e4)
+conditionNames <- c("phenoVT_phenoAM","socialVT_phenoAM","phenoVT_socialAM", "phenoVT_geneticAM", "socialphenoVT_phenoAM")
+v_sample <- c(.8e4)
 folder_pattern <- paste0("nfam", v_sample)
 data_pattern <- paste0("_nfam", v_sample, ".txt")
 save_pattern <- paste0("_", v_sample)
@@ -10,8 +10,8 @@ save_pattern <- paste0("_", v_sample)
 # data_pattern <- c("_16000.txt", "_32000.txt", "_48000.txt",  "_64000.txt", "_80000.txt")
 # save_pattern <- c("_16000", "_32000", "_48000", "_64000", "_80000")
 
-for (i in 1:2){
-    for (j in 1:3){
+for (i in 2:length(conditionNames)){
+    for (j in 1:length(folder_pattern)){
         data_path <- paste0("Data/", conditionNames[i], "/", folder_pattern[j])
         l_files <- list.files(data_path, pattern = data_pattern[j])
         #check if the data has been fitted
@@ -20,7 +20,7 @@ for (i in 1:2){
             next
         }
         summary_list <- list()
-        for (k in 1:100){
+        for (k in 1:length(l_files)){
             fit <- fitBiSEMPGS_m2_tol(paste0(data_path, "/", l_files[k]), 
                                       feaTol = 1e-6, 
                                       optTol = 1e-9,

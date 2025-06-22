@@ -2,6 +2,7 @@
 *.txt
 *.rds
 *.Rdata
+*.csv
 # add slurm output files
 *.out
 *.log

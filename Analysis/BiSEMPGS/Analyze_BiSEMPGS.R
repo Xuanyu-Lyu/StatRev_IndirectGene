@@ -39,13 +39,62 @@ getDf <- function(summary_list, fixed = FALSE) {
     return(df)
 }
 
-sum_list <- readRDS("Analysis/BiSEMPGS/phenotypic_transmission_16000_summary_list.rds")
+sum_list1 <- readRDS("Analysis/BiSEMPGS/phenoVT_geneticAM_8000_summary_list.rds")
 
-df_phenoVT_16000 <- getDf(sum_list, fixed = FALSE)
+sum_df1 <- getDf(sum_list1, fixed = FALSE)
 
-psych::describe(df_phenoVT_16000)
+# write the df
+write.csv(sum_df1, "Analysis/BiSEMPGS/phenoVT_geneticAM_8000_summary_list.csv", row.names = FALSE)
+
+sum_list2 <- readRDS("Analysis/BiSEMPGS/phenoVT_phenoAM_8000_summary_list.rds")
+sum_df2 <- getDf(sum_list2, fixed = FALSE)
+# write the df
+write.csv(sum_df2, "Analysis/BiSEMPGS/phenoVT_phenoAM_8000_summary_list.csv", row.names = FALSE)
+
+sum_list3 <- readRDS("Analysis/BiSEMPGS/socialVT_phenoAM_8000_summary_list.rds")
+sum_df3 <- getDf(sum_list3, fixed = FALSE)
+# write the df
+write.csv(sum_df3, "Analysis/BiSEMPGS/socialVT_phenoAM_8000_summary_list.csv", row.names = FALSE)
+
+sum_list4 <- readRDS("Analysis/BiSEMPGS/phenoVT_socialAM_8000_summary_list.rds")
+sum_df4 <- getDf(sum_list4, fixed = FALSE)
+# write the df
+write.csv(sum_df4, "Analysis/BiSEMPGS/phenoVT_socialAM_8000_summary_list.csv", row.names = FALSE)
 
 
-0.54^2 + 0.71^2
+# use psych::describe to get summary on each condition and save the summary table as tsv files
+library(psych)
+describe_df1 <- psych::describe(sum_df1)
+#write.table(describe_df1, "Analysis/BiSEMPGS/phenoVT_geneticAM_8000_summary_table.tsv", sep = "\t", row.names = TRUE, col.names = TRUE, quote = FALSE)
+describe_df2 <- psych::describe(sum_df2)
+#write.table(describe_df2, "Analysis/BiSEMPGS/phenoVT_phenoAM_8000_summary_table.tsv", sep = "\t", row.names = TRUE, col.names = TRUE, quote = FALSE)
+describe_df3 <- psych::describe(sum_df3)
+#write.table(describe_df3, "Analysis/BiSEMPGS/socialVT_phenoAM_8000_summary_table.tsv", sep = "\t", row.names = TRUE, col.names = TRUE, quote = FALSE)
+describe_df4 <- psych::describe(sum_df4)
+#write.table(describe_df4, "Analysis/BiSEMPGS/phenoVT_socialAM_8000_summary_table.tsv", sep = "\t", row.names = TRUE, col.names = TRUE, quote = FALSE)
 
-0.44^2 + 0.72^2
+rownames(describe_df1)
+
+describe_df1 <- as.data.frame(describe_df1)
+describe_df1$variable <- rownames(describe_df1)
+describe_df2 <- as.data.frame(describe_df2)
+describe_df2$variable <- rownames(describe_df2)
+describe_df3 <- as.data.frame(describe_df3)
+describe_df3$variable <- rownames(describe_df3)
+describe_df4 <- as.data.frame(describe_df4)
+describe_df4$variable <- rownames(describe_df4)
+
+# add a column for the condition
+describe_df1$condition <- "phenoVT_geneticAM"
+describe_df2$condition <- "phenoVT_phenoAM"
+describe_df3$condition <- "socialVT_phenoAM"
+describe_df4$condition <- "phenoVT_socialAM"
+
+# combine the dataframes
+describe_df <- rbind(describe_df1, describe_df2, describe_df3, describe_df4)
+
+# put the condition column first and variable column second
+describe_df <- describe_df[, c("condition", "variable", setdiff(names(describe_df), c("condition", "variable")))]
+
+# write the describe_df to a tsv file
+write.table(describe_df, "Analysis/BiSEMPGS/summary_table.tsv", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
