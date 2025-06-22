@@ -74,7 +74,7 @@ def main(run_folder_path, work_dir, sample_size):
     
     # Parental GRM (using the summed method from RDR.py)
     df_gene_p_sum = df_gene_f.values + df_gene_m.values
-    df_gene_p_sum = pd.DataFrame(df_gene_p_sum, columns=...)
+    df_gene_p_sum = pd.DataFrame(df_gene_p_sum, columns=df_gene_f.columns)
     df_gene_p_sum_std = (df_gene_p_sum - df_gene_p_sum.mean()) / (df_gene_p_sum.std()/np.sqrt(2)) # Original RDR.py std calculation may need checking
     grm_pp = np.dot(df_gene_p_sum_std, df_gene_p_sum_std.T) / (num_snps*2)
 
