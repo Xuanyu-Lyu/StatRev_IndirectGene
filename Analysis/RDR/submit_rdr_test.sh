@@ -12,11 +12,11 @@
 #SBATCH --time=0-24:00:00
 
 # --- Define the array size ---
-#SBATCH --array=1-1000%50
+#SBATCH --array=1-3
 
-#SBATCH --job-name=gcta_rdr_four_condition
-#SBATCH --output=slurm_logs/gcta_rdr_four_%A_%a.out
-#SBATCH --error=slurm_logs/gcta_rdr_four_%A_%a.err
+#SBATCH --job-name=gcta_rdr_check_variance
+#SBATCH --output=slurm_logs/gcta_rdr_check_variance_%A_%a.out
+#SBATCH --error=slurm_logs/gcta_rdr_check_variance_%A_%a.err
 
 # --- Start of Job Commands ---
 # The "set -e" command has been removed to ensure the script continues even if one condition fails.
@@ -34,9 +34,9 @@ chmod +x prepare_grm_noGCTA.py
 # --- Define the list of conditions to run ---
 CONDITIONS=(
     "phenoVT_phenoAM"
-    "socialVT_phenoAM"
-    "phenoVT_socialAM"
-    "phenoVT_geneticAM"
+    #"socialVT_phenoAM"
+    #"phenoVT_socialAM"
+    #"phenoVT_geneticAM"
 )
 
 # --- Loop through each condition ---
@@ -45,7 +45,7 @@ for CONDITION_NAME in "${CONDITIONS[@]}"; do
     echo "--- Starting condition: ${CONDITION_NAME} for Slurm Task ID ${SLURM_ARRAY_TASK_ID} ---"
     echo "================================================="
 
-    BASE_SIM_DIR="/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final/${CONDITION_NAME}"
+    BASE_SIM_DIR="/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final/Tests/${CONDITION_NAME}"
     RUN_FOLDER=$(find "${BASE_SIM_DIR}" -mindepth 1 -maxdepth 1 -type d | sort | sed -n "${SLURM_ARRAY_TASK_ID}p")
     
     # Define the final, permanent directory for results

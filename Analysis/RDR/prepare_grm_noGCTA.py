@@ -53,6 +53,14 @@ def main(run_folder_path, work_dir, sample_size):
     mother_indices = sampled_trios_df['mother_idx'].astype(int).values
 
     df_phen_offspring = df_phen_offspring_full.loc[offspring_indices].reset_index(drop=True)
+    
+    # print the phenotypic variance of the offspring
+    phen_variance = df_phen_offspring['Y1'].var()
+    print(f"Phenotypic variance of the offspring Y1: {phen_variance}")
+    # print the phenotypic variance of the offspring Y2
+    phen_variance_y2 = df_phen_offspring['Y2'].var()
+    print(f"Phenotypic variance of the offspring Y2: {phen_variance_y2}")
+    
     df_gene_o = df_gene_o_full.loc[offspring_indices].reset_index(drop=True)
     df_gene_f = df_gene_parents_full.iloc[father_indices].reset_index(drop=True)
     df_gene_m = df_gene_parents_full.iloc[mother_indices].reset_index(drop=True)
@@ -66,6 +74,7 @@ def main(run_folder_path, work_dir, sample_size):
     
     # Parental GRM (using the summed method from RDR.py)
     df_gene_p_sum = df_gene_f.values + df_gene_m.values
+    df_gene_p_sum = pd.DataFrame(df_gene_p_sum, columns=...)
     df_gene_p_sum_std = (df_gene_p_sum - df_gene_p_sum.mean()) / (df_gene_p_sum.std()/np.sqrt(2)) # Original RDR.py std calculation may need checking
     grm_pp = np.dot(df_gene_p_sum_std, df_gene_p_sum_std.T) / (num_snps*2)
 

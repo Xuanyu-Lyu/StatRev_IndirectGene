@@ -12,6 +12,8 @@ df_offspring = pd.read_table("Her.5-AM.4-Lat0-VF0.15-offspring-nosib.txt", sep="
 
 # extract the phenotype data
 Y_offspring = df_offspring["Y"].values
+# print the variance of the phenotype data
+print("Variance of the phenotype data:", np.var(Y_offspring))
 # standardize the phenotype data
 #Y_offspring = (Y_offspring - Y_offspring.mean()) / Y_offspring.std()
 df_gene_o = df_offspring.iloc[:, 4:]
