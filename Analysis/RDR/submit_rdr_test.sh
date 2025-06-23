@@ -9,10 +9,10 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=140G
-#SBATCH --time=0-24:00:00
+#SBATCH --time=0-8:00:00
 
 # --- Define the array size ---
-#SBATCH --array=1-3
+#SBATCH --array=1-1000%50
 
 #SBATCH --job-name=gcta_rdr_check_variance
 #SBATCH --output=slurm_logs/gcta_rdr_check_variance_%A_%a.out
@@ -49,7 +49,7 @@ for CONDITION_NAME in "${CONDITIONS[@]}"; do
     RUN_FOLDER=$(find "${BASE_SIM_DIR}" -mindepth 1 -maxdepth 1 -type d | sort | sed -n "${SLURM_ARRAY_TASK_ID}p")
     
     # Define the final, permanent directory for results
-    FINAL_RESULTS_DIR="/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/VarTests/${CONDITION_NAME}"
+    FINAL_RESULTS_DIR="/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/RDR_Results/${CONDITION_NAME}"
 
     if [ -z "${RUN_FOLDER}" ]; then
         echo "Error: Could not find a run folder for task ID ${SLURM_ARRAY_TASK_ID} in condition ${CONDITION_NAME}. Skipping to next condition."
