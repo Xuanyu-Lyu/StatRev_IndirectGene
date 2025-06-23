@@ -80,7 +80,7 @@ def main():
     CONDITIONS_TO_PROCESS = ["phenoVT_phenoAM", "socialVT_phenoAM", "phenoVT_socialAM", "phenoVT_geneticAM"]
     
     # Configuration for the extraction
-    GENERATION_TO_EXTRACT = 0
+    GENERATIONS_TO_EXTRACT = [0, 1, 20]  # List of generations to extract
     MATRICES_TO_EXTRACT = ["VP", "VF","covI", "VAO", "VAL"]
     
     print("--- Starting Matrix Extraction and Averaging ---")
@@ -103,39 +103,43 @@ def main():
         
         print(f"  Found {len(summary_files)} replication summaries to process.")
         
-        # Initialize a dictionary to hold lists of matrices
-        matrix_collections = {key: [] for key in MATRICES_TO_EXTRACT}
-        
-        # --- 3. Parse each file and collect matrices ---
-        for f_path in summary_files:
-            for matrix_name in MATRICES_TO_EXTRACT:
-                matrix = parse_matrix_from_summary(f_path, GENERATION_TO_EXTRACT, matrix_name)
-                if matrix is not None:
-                    matrix_collections[matrix_name].append(matrix)
+        # --- 3. Loop through each generation ---
+        for generation in GENERATIONS_TO_EXTRACT:
+            print(f"    Processing generation {generation}...")
+            
+            # Initialize a dictionary to hold lists of matrices for this generation
+            matrix_collections = {key: [] for key in MATRICES_TO_EXTRACT}
+            
+            # --- 4. Parse each file and collect matrices for this generation ---
+            for f_path in summary_files:
+                for matrix_name in MATRICES_TO_EXTRACT:
+                    matrix = parse_matrix_from_summary(f_path, generation, matrix_name)
+                    if matrix is not None:
+                        matrix_collections[matrix_name].append(matrix)
 
-        # --- 4. Calculate averages and save to a single file ---
-        output_filename = os.path.join(DESTINATION_DIR, f"Averaged_Matrices_{condition}_Gen{GENERATION_TO_EXTRACT}.txt")
-        
-        with open(output_filename, 'w') as f:
-            f.write(f"--- Averaged Results for Condition: {condition} ---\n")
-            f.write(f"Generation Analyzed: {GENERATION_TO_EXTRACT}\n")
-            f.write(f"Total Replications Found: {len(summary_files)}\n")
-            f.write("-" * 50 + "\n\n")
+            # --- 5. Calculate averages and save to a separate file for this generation ---
+            output_filename = os.path.join(DESTINATION_DIR, f"Averaged_Matrices_{condition}_Gen{generation}.txt")
+            
+            with open(output_filename, 'w') as f:
+                f.write(f"--- Averaged Results for Condition: {condition} ---\n")
+                f.write(f"Generation Analyzed: {generation}\n")
+                f.write(f"Total Replications Found: {len(summary_files)}\n")
+                f.write("-" * 50 + "\n\n")
 
-            for matrix_name, matrix_list in matrix_collections.items():
-                if not matrix_list:
-                    f.write(f"Matrix: {matrix_name}\n")
-                    f.write("  -> No data found or could not be parsed.\n\n")
-                    continue
-                
-                # Calculate the element-wise average of all matrices in the list
-                avg_matrix = np.mean(matrix_list, axis=0)
-                
-                f.write(f"Average '{matrix_name}' Matrix (from {len(matrix_list)} replications):\n")
-                f.write(np.array2string(avg_matrix, precision=4, separator=', ', floatmode='fixed'))
-                f.write("\n\n")
-        
-        print(f"  -> Finished. Averaged results saved to: {output_filename}")
+                for matrix_name, matrix_list in matrix_collections.items():
+                    if not matrix_list:
+                        f.write(f"Matrix: {matrix_name}\n")
+                        f.write("  -> No data found or could not be parsed.\n\n")
+                        continue
+                    
+                    # Calculate the element-wise average of all matrices in the list
+                    avg_matrix = np.mean(matrix_list, axis=0)
+                    
+                    f.write(f"Average '{matrix_name}' Matrix (from {len(matrix_list)} replications):\n")
+                    f.write(np.array2string(avg_matrix, precision=4, separator=', ', floatmode='fixed'))
+                    f.write("\n\n")
+            
+            print(f"      -> Finished. Averaged results saved to: {output_filename}")
 
     print("\n--- All conditions processed. ---")
 
