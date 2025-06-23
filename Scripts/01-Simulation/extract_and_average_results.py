@@ -80,8 +80,8 @@ def main():
     CONDITIONS_TO_PROCESS = ["phenoVT_phenoAM", "socialVT_phenoAM", "phenoVT_socialAM", "phenoVT_geneticAM"]
     
     # Configuration for the extraction
-    GENERATION_TO_EXTRACT = 1
-    MATRICES_TO_EXTRACT = ["VP", "VF", "w", "v", "covI", ]
+    GENERATION_TO_EXTRACT = 0
+    MATRICES_TO_EXTRACT = ["VP", "VF","covI", "VAO", "VAL"]
     
     print("--- Starting Matrix Extraction and Averaging ---")
 
