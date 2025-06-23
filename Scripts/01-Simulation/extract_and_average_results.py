@@ -81,7 +81,7 @@ def main():
     
     # Configuration for the extraction
     GENERATION_TO_EXTRACT = 1
-    MATRICES_TO_EXTRACT = ["VP", "VF", "w", "v", " covI"]
+    MATRICES_TO_EXTRACT = ["VP", "VF", "w", "v", "covI", ]
     
     print("--- Starting Matrix Extraction and Averaging ---")
 
