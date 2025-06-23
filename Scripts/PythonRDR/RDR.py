@@ -147,6 +147,7 @@ if res.success:
     print("v_e_g     =", v_e_g_hat)
     print("c_g_e     =", c_g_e_hat)
     print("sigma^2   =", sigma2_hat)
+    print("Sum of variances:", v_g_hat + v_e_g_hat + c_g_e_hat + sigma2_hat)
 else:
     print("Optimization failed:", res.message)
     
