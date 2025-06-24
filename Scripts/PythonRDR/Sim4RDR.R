@@ -17,13 +17,13 @@ ALPHA.VECTOR <- sample(c(-1,1),num.cvs,replace=TRUE)*sqrt(1/(num.cvs*GENTP.VAR))
 CV.INFO <- data.frame(MAF=MAF.VECTOR,alpha=ALPHA.VECTOR)
 
 results <- list()
-for(k in 1:10){
+for(k in 1){
     data_list <- AM.SIMULATE(
         CV.INFO = CV.INFO, 
         H2.T0 = .5, 
         NUM.GENERATIONS = 20, 
         POP.SIZE = 5000, 
-        MATE.COR = 0.4, 
+        MATE.COR = 0, 
         AVOID.INB = TRUE, 
         SAVE.EACH.GEN = TRUE, 
         SAVE.COVS = TRUE, 
@@ -42,11 +42,15 @@ as.data.frame(results[[1]]["XO"]$XO[20]) |> head()
 as.data.frame(results[[1]]["XL"]$XL[20]) |> head()
 as.data.frame(results[[1]]$PHEN[[20]]) |> names()
 
+cov(results[[1]]$PHEN[[2]])["Y", "Y"] # check the covariance of the phenotype at generation 3
+
 # get the phenotype and genetic information for the offspring
 df_phe_gen_offspring <- cbind(as.data.frame(results[[1]]$PHEN[[20]])[,c("ID","Y", "Father.ID","Mother.ID")], as.data.frame(results[[1]]["XO"]$XO[20]))
 colnames(df_phe_gen_offspring)[1:4] <- c("ID","Y", "Father.ID","Mother.ID")
 # only randomly keep one of the offsprings if they have the same parents
 df_phe_gen_offspring <- df_phe_gen_offspring[!duplicated(df_phe_gen_offspring[,c("Father.ID")]),]
+
+cov(df_phe_gen_offspring$Y, df_phe_gen_offspring$Y)
 
 
 # get the genetic information for the parents
@@ -67,7 +71,7 @@ for(i in 1: nrow(df_phe_gen_offspring)){
 }
 
 # save offspring, mother and father genetic information
-write.table(df_phe_gen_offspring, file = "Scripts/PythonRDR/Her.5-AM.4-Lat0-VF0.15-offspring-nosib.txt", row.names = FALSE, col.names = TRUE, sep = "\t")
-write.table(df_gene_mother, file = "Scripts/PythonRDR/Her.5-AM.4-Lat0-VF0.15-mother-nosib.txt", row.names = FALSE, col.names = TRUE, sep = "\t")
-write.table(df_gene_father, file = "Scripts/PythonRDR/Her.5-AM.4-Lat0-VF0.15-father-nosib.txt", row.names = FALSE, col.names = TRUE, sep = "\t")
+write.table(df_phe_gen_offspring, file = "Scripts/PythonRDR/Her.5-AM0-Lat0-VF0.15-offspring-nosib.txt", row.names = FALSE, col.names = TRUE, sep = "\t")
+write.table(df_gene_mother, file = "Scripts/PythonRDR/Her.5-AM0-Lat0-VF0.15-mother-nosib.txt", row.names = FALSE, col.names = TRUE, sep = "\t")
+write.table(df_gene_father, file = "Scripts/PythonRDR/Her.5-AM0-Lat0-VF0.15-father-nosib.txt", row.names = FALSE, col.names = TRUE, sep = "\t")
 

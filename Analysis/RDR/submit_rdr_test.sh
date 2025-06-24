@@ -12,7 +12,7 @@
 #SBATCH --time=0-8:00:00
 
 # --- Define the array size ---
-#SBATCH --array=1-1000%50
+#SBATCH --array=1-1000%80
 
 #SBATCH --job-name=gcta_rdr_check_variance
 #SBATCH --output=slurm_logs/gcta_rdr_check_variance_%A_%a.out
@@ -34,9 +34,10 @@ chmod +x prepare_grm_noGCTA.py
 # --- Define the list of conditions to run ---
 CONDITIONS=(
     #"phenoVT_phenoAM"
-    "socialVT_phenoAM"
+    #"socialVT_phenoAM"
     #"phenoVT_socialAM"
     #"phenoVT_geneticAM"
+    "t1pheVT_t2socVT_uniphenoAM"
 )
 
 # --- Loop through each condition ---
