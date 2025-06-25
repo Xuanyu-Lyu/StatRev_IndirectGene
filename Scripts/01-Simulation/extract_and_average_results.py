@@ -77,7 +77,7 @@ def main():
     os.makedirs(DESTINATION_DIR, exist_ok=True)
     
     # List the conditions you want to process
-    CONDITIONS_TO_PROCESS = ["phenoVT_phenoAM", "socialVT_phenoAM", "phenoVT_socialAM", "phenoVT_geneticAM"]
+    CONDITIONS_TO_PROCESS = ["t1pheVT_t2socVT_uniphenoAM"]
     
     # Configuration for the extraction
     GENERATIONS_TO_EXTRACT = [0, 1, 20]  # List of generations to extract
