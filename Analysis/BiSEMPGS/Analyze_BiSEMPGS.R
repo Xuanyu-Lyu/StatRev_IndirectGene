@@ -61,6 +61,10 @@ sum_df4 <- getDf(sum_list4, fixed = FALSE)
 # write the df
 write.csv(sum_df4, "Analysis/BiSEMPGS/phenoVT_socialAM_8000_summary_list.csv", row.names = FALSE)
 
+sum_list5 <- readRDS("Analysis/BiSEMPGS/t1pheVT_t2socVT_uniphenoAM_8000_summary_list.rds")
+sum_df5 <- getDf(sum_list5, fixed = FALSE)
+# write the df
+write.csv(sum_df5, "Analysis/BiSEMPGS/t1pheVT_t2socVT_uniphenoAM_8000_summary_list.csv", row.names = FALSE)
 
 # use psych::describe to get summary on each condition and save the summary table as tsv files
 library(psych)
@@ -72,6 +76,7 @@ describe_df3 <- psych::describe(sum_df3)
 #write.table(describe_df3, "Analysis/BiSEMPGS/socialVT_phenoAM_8000_summary_table.tsv", sep = "\t", row.names = TRUE, col.names = TRUE, quote = FALSE)
 describe_df4 <- psych::describe(sum_df4)
 #write.table(describe_df4, "Analysis/BiSEMPGS/phenoVT_socialAM_8000_summary_table.tsv", sep = "\t", row.names = TRUE, col.names = TRUE, quote = FALSE)
+describe_df5 <- psych::describe(sum_df5)
 
 rownames(describe_df1)
 
@@ -83,15 +88,18 @@ describe_df3 <- as.data.frame(describe_df3)
 describe_df3$variable <- rownames(describe_df3)
 describe_df4 <- as.data.frame(describe_df4)
 describe_df4$variable <- rownames(describe_df4)
+describe_df5 <- as.data.frame(describe_df5)
+describe_df5$variable <- rownames(describe_df5)
 
 # add a column for the condition
 describe_df1$condition <- "phenoVT_geneticAM"
 describe_df2$condition <- "phenoVT_phenoAM"
 describe_df3$condition <- "socialVT_phenoAM"
 describe_df4$condition <- "phenoVT_socialAM"
+describe_df5$condition <- "t1pheVT_t2socVT_uniphenoAM"
 
 # combine the dataframes
-describe_df <- rbind(describe_df1, describe_df2, describe_df3, describe_df4)
+describe_df <- rbind(describe_df1, describe_df2, describe_df3, describe_df4, describe_df5)
 
 # put the condition column first and variable column second
 describe_df <- describe_df[, c("condition", "variable", setdiff(names(describe_df), c("condition", "variable")))]

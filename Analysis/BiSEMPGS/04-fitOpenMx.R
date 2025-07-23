@@ -1,6 +1,6 @@
 source("Analysis/BiSEMPGS/04-OpenMxFunctions.R")
 library(crayon)
-conditionNames <- c("phenoVT_phenoAM","socialVT_phenoAM","phenoVT_socialAM", "phenoVT_geneticAM", "socialphenoVT_phenoAM")
+conditionNames <- c("phenoVT_phenoAM","socialVT_phenoAM","phenoVT_socialAM", "phenoVT_geneticAM", "socialphenoVT_phenoAM", "t1pheVT_t2socVT_uniphenoAM")
 v_sample <- c(.8e4)
 folder_pattern <- paste0("nfam", v_sample)
 data_pattern <- paste0("_nfam", v_sample, ".txt")
@@ -10,7 +10,7 @@ save_pattern <- paste0("_", v_sample)
 # data_pattern <- c("_16000.txt", "_32000.txt", "_48000.txt",  "_64000.txt", "_80000.txt")
 # save_pattern <- c("_16000", "_32000", "_48000", "_64000", "_80000")
 
-for (i in 2){
+for (i in 6){
     for (j in 1:length(folder_pattern)){
         data_path <- paste0("Data/", conditionNames[i], "/", folder_pattern[j])
         l_files <- list.files(data_path, pattern = data_pattern[j])
