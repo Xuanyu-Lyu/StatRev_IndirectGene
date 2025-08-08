@@ -82,7 +82,7 @@ def main():
     Main function to define conditions and map a Slurm task ID to a BATCH of replications.
     """
     # --- 1. Main Configuration ---
-    main_output_directory = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final"
+    main_output_directory = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/Paper"
     REPLICATIONS_PER_CONDITION = 1000 
     REPLICATIONS_PER_SLURM_TASK = 4
 
@@ -98,16 +98,23 @@ def main():
     base_params.update({"k2_matrix": k2_val, "d_mat": d_mat_val, "a_mat": a_mat_val, "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val, "covy_mat": covy_val, "am_list": am_list_val})
     f_mat_condition_A = np.array([[.10,.15],[.05,.15]]); s_mat_condition_A = np.array([[0,0],[0,0]])
     f_mat_condition_B = np.array([[0,0],[0,0]]); s_mat_condition_B = np.array([[.3,.15],[.2,.35]])
-    f_mat_uni = np.array([[.3,0],[0,0]]); s_mat_uni = np.array([[0,0],[0,0.5]]); am_list_val_uni = [np.array([[0.3,0], [0, 0.3]])] * int(base_params["num_generations"]); cove_val_uni = np.array([[0.2,0], [0, 0.2]])
+    f_mat_uni = np.array([[.3,0],[0,0]]); s_mat_uni = np.array([[0,0],[0,0.5]]); am_list_val_null = [np.array([[0,0], [0, 0]])] * int(base_params["num_generations"]); cove_val_uni = np.array([[0,0], [0, 0]])
+    am_list_val_uni = [np.array([[0.3,0], [0, 0]])] * int(base_params["num_generations"])
+    # simulation_conditions = [
+    #     #{"condition_name": "phenoVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
+    #     #{"condition_name": "socialVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
+    #     #{"condition_name": "phenoVT_socialAM", "simulation_params": {**base_params, "mating_type": "social", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
+    #     #{"condition_name": "phenoVT_geneticAM", "simulation_params": {**base_params, "mating_type": "genotypic", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
+    #     #{"condition_name": "socialVT_socialAM", "simulation_params": {**base_params, "mating_type": "social", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
+    #     #{"condition_name": "socialVT_geneticAM", "simulation_params": {**base_params, "mating_type": "genotypic", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
+    #     #{"condition_name": "socialphenoVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
+    #     #{"condition_name": "t1pheVT_t2socVT_uniphenoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}}
+    # ]
     simulation_conditions = [
-        #{"condition_name": "phenoVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
-        #{"condition_name": "socialVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
-        #{"condition_name": "phenoVT_socialAM", "simulation_params": {**base_params, "mating_type": "social", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
-        #{"condition_name": "phenoVT_geneticAM", "simulation_params": {**base_params, "mating_type": "genotypic", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
-        #{"condition_name": "socialVT_socialAM", "simulation_params": {**base_params, "mating_type": "social", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
-        #{"condition_name": "socialVT_geneticAM", "simulation_params": {**base_params, "mating_type": "genotypic", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
-        #{"condition_name": "socialphenoVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
-        {"condition_name": "t1pheVT_t2socVT_uniphenoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}}
+        {"condition_name": "01_t1pheVTnoAM_t2socVTnoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_null}},
+        {"condition_name": "02_t1noVTpheAM_t2noVTnoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
+        {"condition_name": "03_t1noVTsocAM_t2noVTnoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "social", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
+        {"condition_name": "04_t1noVTgenAM_t2noVTnoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "genotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}}
     ]
 
     # --- 3. Determine Which Batch This Slurm Task Will Run (unchanged) ---

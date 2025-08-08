@@ -12,8 +12,8 @@
 #SBATCH --error=slurm_logs/sim_run_%A_%a.err
 
 # --- Define the total number of tasks for the array ---
-# CORRECTED: (1 conditions * 1000 reps) / 4 reps_per_task = 250 tasks
-#SBATCH --array=1-250%50
+# CORRECTED: (4 conditions * 1000 reps) / 4 reps_per_task = 1000 tasks
+#SBATCH --array=1-1000%30
 
 # --- Your Job's Commands ---
 

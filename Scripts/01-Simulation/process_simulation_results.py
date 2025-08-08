@@ -103,14 +103,16 @@ def main():
     Main function to define conditions and orchestrate parallel processing
     using a more robust method to catch errors from worker processes.
     """
-    SOURCE_DATA_DIR = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final" # Make sure this points to the right batch folder
-    DESTINATION_DIR = "/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Data/ASHG_Final"
-    CONDITIONS_TO_PROCESS = [#"phenoVT_phenoAM",
+    SOURCE_DATA_DIR = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/Paper" # Make sure this points to the right batch folder
+    DESTINATION_DIR = "/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Data/Paper"
+    #CONDITIONS_TO_PROCESS = [#"phenoVT_phenoAM",
                              #"socialVT_phenoAM",
                              #"phenoVT_socialAM", 
                              #"phenoVT_geneticAM", 
                              #"socialphenoVT_phenoAM",
-                             "t1pheVT_t2socVT_uniphenoAM"]
+                             #"t1pheVT_t2socVT_uniphenoAM",
+                             #"01_t1pheVTnoAM_t2socVTnoAM"] # Add or remove conditions as needed
+    CONDITIONS_TO_PROCESS = ["01_t1pheVTnoAM_t2socVTnoAM", "02_t1noVTpheAM_t2noVTnoAM", "03_t1noVTsocAM_t2noVTnoAM", "04_t1noVTgenAM_t2noVTnoAM"]       
     TARGET_SAMPLE_SIZES = [2000, 4000, 8000, 16000, 32000]
     NUM_PROCESSES = int(os.environ.get('SLURM_CPUS_PER_TASK', 10))
     DEFAULT_COLUMNS_TO_EXTRACT = {
