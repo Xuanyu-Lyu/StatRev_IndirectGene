@@ -1,6 +1,15 @@
 source("Analysis/BiSEMPGS/04-OpenMxFunctions.R")
 library(crayon)
-conditionNames <- c("phenoVT_phenoAM","socialVT_phenoAM","phenoVT_socialAM", "phenoVT_geneticAM", "socialphenoVT_phenoAM", "t1pheVT_t2socVT_uniphenoAM")
+conditionNames <- c("phenoVT_phenoAM",
+                    "socialVT_phenoAM",
+                    "phenoVT_socialAM",
+                    "phenoVT_geneticAM",
+                    "socialphenoVT_phenoAM",
+                    "t1pheVT_t2socVT_uniphenoAM"
+                    )
+conditionNames <- c("01_t1pheVTnoAM_t2socVTnoAM", "02_t1noVTpheAM_t2noVTnoAM", "03_t1noVTsocAM_t2noVTnoAM", "04_t1noVTgenAM_t2noVTnoAM")
+
+
 v_sample <- c(.8e4)
 folder_pattern <- paste0("nfam", v_sample)
 data_pattern <- paste0("_nfam", v_sample, ".txt")
