@@ -9,10 +9,10 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=140G
-#SBATCH --time=0-8:00:00
+#SBATCH --time=0-12:00:00
 
 # --- Define the array size ---
-#SBATCH --array=1-1000%80
+#SBATCH --array=1-1000%30
 
 #SBATCH --job-name=gcta_rdr_check_variance
 #SBATCH --output=slurm_logs/gcta_rdr_check_variance_%A_%a.out
@@ -37,7 +37,11 @@ CONDITIONS=(
     #"socialVT_phenoAM"
     #"phenoVT_socialAM"
     #"phenoVT_geneticAM"
-    "t1pheVT_t2socVT_uniphenoAM"
+    #"t1pheVT_t2socVT_uniphenoAM"
+    "01_t1pheVTnoAM_t2socVTnoAM"
+    "02_t1noVTpheAM_t2noVTnoAM"
+    "03_t1noVTsocAM_t2noVTnoAM"
+    "04_t1noVTgenAM_t2noVTnoAM"
 )
 
 # --- Loop through each condition ---
