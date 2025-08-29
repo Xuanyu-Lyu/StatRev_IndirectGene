@@ -50,7 +50,7 @@ for CONDITION_NAME in "${CONDITIONS[@]}"; do
     echo "--- Starting condition: ${CONDITION_NAME} for Slurm Task ID ${SLURM_ARRAY_TASK_ID} ---"
     echo "================================================="
 
-    BASE_SIM_DIR="/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final/${CONDITION_NAME}"
+    BASE_SIM_DIR="/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/Paper/${CONDITION_NAME}"
     RUN_FOLDER=$(find "${BASE_SIM_DIR}" -mindepth 1 -maxdepth 1 -type d | sort | sed -n "${SLURM_ARRAY_TASK_ID}p")
     
     # Define the final, permanent directory for results
