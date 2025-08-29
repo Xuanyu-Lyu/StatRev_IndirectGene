@@ -77,12 +77,12 @@ def main():
     os.makedirs(DESTINATION_DIR, exist_ok=True)
     
     # List the conditions you want to process
-    CONDITIONS_TO_PROCESS = ["t1pheVT_t2socVT_uniphenoAM"]
+    CONDITIONS_TO_PROCESS = ["01_t1pheVTnoAM_t2socVTnoAM", "02_t1noVTpheAM_t2noVTnoAM", "03_t1noVTsocAM_t2noVTnoAM", "04_t1noVTgenAM_t2noVTnoAM"]
     
     # Configuration for the extraction
     GENERATIONS_TO_EXTRACT = [0, 1, 20]  # List of generations to extract
-    MATRICES_TO_EXTRACT = ["VP", "VF","covI", "VAO", "VAL", "w", "v"]
-    
+    MATRICES_TO_EXTRACT = ["VP", "VF","covI", "VAO", "VAL", "w", "v", "covG", "covH", "covF", "covE", "thetaNT", "thetaT"]
+
     print("--- Starting Matrix Extraction and Averaging ---")
 
     # --- 2. Loop through each condition ---
