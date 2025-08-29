@@ -70,10 +70,10 @@ def main():
     """
     # --- 1. CONFIGURATION ---
     # Top-level directory where your simulation condition folders are
-    SOURCE_DIR = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/ASHG_Final"
+    SOURCE_DIR = "/scratch/alpine/xuly4739/StatRev_IndirectGene/Data/Paper"
     
     # Where to save the final averaged output
-    DESTINATION_DIR = "/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/Averaged_Results"
+    DESTINATION_DIR = "/projects/xuly4739/Py_Projects/StatRev_IndirectGene/Analysis/Averaged_Results/Paper"
     os.makedirs(DESTINATION_DIR, exist_ok=True)
     
     # List the conditions you want to process
