@@ -112,9 +112,9 @@ def main():
     # ]
     simulation_conditions = [
         {"condition_name": "01_t1pheVTnoAM_t2socVTnoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_null}},
-        {"condition_name": "02_t1noVTpheAM_t2noVTnoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
-        {"condition_name": "03_t1noVTsocAM_t2noVTnoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "social", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
-        {"condition_name": "04_t1noVTgenAM_t2noVTnoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "genotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}}
+        {"condition_name": "02_t1noVTpheAM_t2noVTnoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
+        {"condition_name": "03_t1noVTsocAM_t2noVTnoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "social", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
+        {"condition_name": "04_t1noVTgenAM_t2noVTnoAM", "simulation_params": {**base_params, "rg_effects": 0, "mating_type": "genotypic", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}}
     ]
 
     # --- 3. Determine Which Batch This Slurm Task Will Run (unchanged) ---

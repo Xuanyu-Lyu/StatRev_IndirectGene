@@ -56,3 +56,16 @@ Matt's Opinion: Use Richard's package if he's available to implement simulations
 
 ### Analysis plan
 1. Two different conditions: Both phenotypic AM. One with only phenotypic vertical transmission and one with both phenotypic and F transmission
+
+
+### Steps for using the pipeline
+
+1. Simulate phenotypes using scripts in Scripts/01-Simulation. Set up simulation conditions in runsimulations.py and submit the job with submit_simulations_hpc.sh. 
+
+2. After that, use submit_processing.sh to extract the txt file for analyses in OpenMx. 
+
+3. Use submit_sim_aggregation.sh to get a summary of all the simulated files at specified generation. 
+
+4. Use Analysis/RDR/submit_rdr_test.sh to run the RDR analyses from the raw data.
+
+5. Download the processed txt files to local computers and run SEMPGS and regression. 
