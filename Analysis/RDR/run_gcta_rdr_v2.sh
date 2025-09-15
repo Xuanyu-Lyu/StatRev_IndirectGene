@@ -63,6 +63,7 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     STEP3A_START_TIME=$(date +%s)
     
     gcta64 --reml --mgrm "${WORK_DIR}/mgrm.txt" \
+           --reml-no-constrain \
            --reml-no-lrt \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 1 \
            --out "${OUTPUT_PREFIX}_Y1" \
@@ -77,6 +78,7 @@ for N in "${TARGET_SAMPLE_SIZES[@]}"; do
     STEP3B_START_TIME=$(date +%s)
     
     gcta64 --reml --mgrm "${WORK_DIR}/mgrm.txt" \
+           --reml-no-constrain \
            --reml-no-lrt \
            --pheno "${WORK_DIR}/offspring.phen" --mpheno 2 \
            --out "${OUTPUT_PREFIX}_Y2" \
