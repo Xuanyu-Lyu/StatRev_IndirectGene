@@ -40,8 +40,8 @@ CONDITIONS=(
     #"t1pheVT_t2socVT_uniphenoAM"
     "01_t1pheVTnoAM_t2socVTnoAM"
     "02_t1noVTpheAM_t2noVTnoAM"
-    "03_t1noVTsocAM_t2noVTnoAM"
-    "04_t1noVTgenAM_t2noVTnoAM"
+    #"03_t1noVTsocAM_t2noVTnoAM"
+    #"04_t1noVTgenAM_t2noVTnoAM"
 )
 
 # --- Loop through each condition ---
