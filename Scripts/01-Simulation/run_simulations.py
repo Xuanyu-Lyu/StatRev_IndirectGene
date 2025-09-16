@@ -149,9 +149,9 @@ def main():
             # A simple check is just for the folder, a more robust check could be
             # for a specific file, e.g., the summary.txt file.
             summary_file_path = os.path.join(run_output_folder, f"{condition_name}_run_{i:03d}_xo_gen20.tsv")
-            if os.path.exists(summary_file_path):
-                 print(f"Skipping replication {i} for condition '{condition_name}': Output directory and summary file already exist.")
-                 continue # Go to the next replication
+            # if os.path.exists(summary_file_path):
+            #      print(f"Skipping replication {i} for condition '{condition_name}': Output directory and summary file already exist.")
+            #      continue # Go to the next replication
 
         task = {
             "replication_id": i,
