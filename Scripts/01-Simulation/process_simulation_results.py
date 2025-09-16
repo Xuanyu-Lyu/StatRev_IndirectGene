@@ -112,7 +112,9 @@ def main():
                              #"socialphenoVT_phenoAM",
                              #"t1pheVT_t2socVT_uniphenoAM",
                              #"01_t1pheVTnoAM_t2socVTnoAM"] # Add or remove conditions as needed
-    CONDITIONS_TO_PROCESS = ["01_t1pheVTnoAM_t2socVTnoAM", "02_t1noVTpheAM_t2noVTnoAM", "03_t1noVTsocAM_t2noVTnoAM", "04_t1noVTgenAM_t2noVTnoAM"]       
+    CONDITIONS_TO_PROCESS = ["01_t1pheVTnoAM_t2socVTnoAM", "02_t1noVTpheAM_t2noVTnoAM"
+                             #, "03_t1noVTsocAM_t2noVTnoAM", "04_t1noVTgenAM_t2noVTnoAM"
+                             ]       
     TARGET_SAMPLE_SIZES = [2000, 4000, 8000, 16000, 32000]
     NUM_PROCESSES = int(os.environ.get('SLURM_CPUS_PER_TASK', 10))
     DEFAULT_COLUMNS_TO_EXTRACT = {
