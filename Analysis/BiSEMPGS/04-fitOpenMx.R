@@ -7,7 +7,7 @@ conditionNames <- c("phenoVT_phenoAM",
                     "socialphenoVT_phenoAM",
                     "t1pheVT_t2socVT_uniphenoAM",
                     "01_t1pheVTnoAM_t2socVTnoAM",
-                    "02_t1noVTpheAM_t2noVTnoAM",
+                    "02_t1noVTpheAM_t2noVTnoAM"
                     #"03_t1noVTsocAM_t2noVTnoAM"
                     #"04_t1noVTgenAM_t2noVTnoAM"
                     )
@@ -28,10 +28,10 @@ for (i in 1:2){
         data_path <- paste0("Data/", conditionNames[i], "/", folder_pattern[j])
         l_files <- list.files(data_path, pattern = data_pattern[j])
         #check if the data has been fitted
-        if (file.exists(paste0("Analysis/Paper/", conditionNames[i], "/m2_paper_version3", save_pattern[j], "_summary_list.rds"))){
-            cat("Summary list for", conditionNames[i], "\t n=", folder_pattern[j], "has been fitted\n")
-            next
-        }
+        # if (file.exists(paste0("Analysis/Paper/", conditionNames[i], "/m2_paper_version3", save_pattern[j], "_summary_list.rds"))){
+        #     cat("Summary list for", conditionNames[i], "\t n=", folder_pattern[j], "has been fitted\n")
+        #     next
+        # }
         summary_list <- list()
         for (k in 1:length(l_files)){
             fit <- fitBiSEMPGS_m2_tol(paste0(data_path, "/", l_files[k]), 
