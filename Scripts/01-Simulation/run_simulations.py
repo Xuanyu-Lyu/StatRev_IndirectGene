@@ -98,7 +98,7 @@ def main():
     base_params.update({"k2_matrix": k2_val, "d_mat": d_mat_val, "a_mat": a_mat_val, "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val, "covy_mat": covy_val, "am_list": am_list_val})
     f_mat_condition_A = np.array([[.10,.15],[.05,.15]]); s_mat_condition_A = np.array([[0,0],[0,0]])
     f_mat_condition_B = np.array([[0,0],[0,0]]); s_mat_condition_B = np.array([[.3,.15],[.2,.35]])
-    f_mat_uni = np.array([[.3,0],[0,0]]); s_mat_uni = np.array([[0,0],[0,0.5]]); am_list_val_null = [np.array([[0,0], [0, 0]])] * int(base_params["num_generations"]); cove_val_uni = np.array([[0,0], [0, 0]])
+    f_mat_uni = np.array([[.3,0],[0,0]]); s_mat_uni = np.array([[0,0],[0,0.5]]); am_list_val_null = [np.array([[0,0], [0, 0]])] * int(base_params["num_generations"]); cove_val_uni = np.array([[0.2,0], [0, 0.2]])
     am_list_val_uni = [np.array([[0.3,0], [0, 0]])] * int(base_params["num_generations"])
     # simulation_conditions = [
     #     #{"condition_name": "phenoVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
