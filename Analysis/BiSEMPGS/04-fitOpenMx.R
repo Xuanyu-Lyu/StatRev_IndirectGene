@@ -40,7 +40,7 @@ for (i in 1:2){
                                       jitterMean = 0.5,
                                       jitterVar = .1,
                                       exhaustive = TRUE,
-                                      extraTries = 5)
+                                      extraTries = 2)
             summary_list[[l_files[k]]] <- fit
             cat(magenta("\n", conditionNames[i], "\tn=", folder_pattern[j], "\tModel", l_files[k], "has been fitted\n"))
         }
