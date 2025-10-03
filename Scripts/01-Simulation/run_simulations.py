@@ -120,10 +120,10 @@ def main():
     # four conditions that PGS explains all genetic variance
     d_mat_val_full = np.diag([np.sqrt(0.8), np.sqrt(0.8)]); a_mat_val_full = np.diag([0, 0])
     simulation_conditions = [
-        {"condition_name": "05_t1pheVTnoAM_t2socVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat_val": d_mat_val_full, "a_mat_val": a_mat_val_full, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_null}},
-        {"condition_name": "06_t1noVTpheAM_t2noVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat_val": d_mat_val_full, "a_mat_val": a_mat_val_full, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
-        {"condition_name": "07_t1noVTsocAM_t2noVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat_val": d_mat_val_full, "a_mat_val": a_mat_val_full, "rg_effects": 0, "mating_type": "social", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
-        {"condition_name": "08_t1noVTgenAM_t2noVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat_val": d_mat_val_full, "a_mat_val": a_mat_val_full, "rg_effects": 0, "mating_type": "genotypic", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
+        {"condition_name": "05_t1pheVTnoAM_t2socVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_null}},
+        {"condition_name": "06_t1noVTpheAM_t2noVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
+        {"condition_name": "07_t1noVTsocAM_t2noVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "social", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
+        {"condition_name": "08_t1noVTgenAM_t2noVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "genotypic", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
         
     ]
 
