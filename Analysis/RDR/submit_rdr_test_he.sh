@@ -28,7 +28,7 @@ source /curc/sw/anaconda3/latest
 conda activate /projects/xuly4739/general_env
 
 # Make worker scripts executable
-chmod +x run_GCTA_rdr_HEreg.sh
+chmod +x run_GCTA_rdr_he.sh
 chmod +x prepare_grm_noGCTA.py
 
 # --- Define the list of conditions to run ---
