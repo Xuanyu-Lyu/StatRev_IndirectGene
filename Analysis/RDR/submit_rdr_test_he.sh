@@ -12,7 +12,7 @@
 #SBATCH --time=0-12:00:00
 
 # --- Define the array size ---
-#SBATCH --array=1-4%2
+#SBATCH --array=1-1000%25
 
 #SBATCH --job-name=gcta_rdr_hereg_check_variance
 #SBATCH --output=slurm_logs/gcta_rdr_hereg_check_variance_%A_%a.out
