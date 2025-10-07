@@ -66,7 +66,7 @@ for CONDITION_NAME in "${CONDITIONS[@]}"; do
     fi
 
     # --- Execute the worker script for the current condition ---
-    ./run_GCTA_rdr_he.sh "${RUN_FOLDER}" "${FINAL_RESULTS_DIR}"
+    ./run_gcta_rdr_he.sh "${RUN_FOLDER}" "${FINAL_RESULTS_DIR}"
 
     # Check the exit code of the worker script to log success or failure
     if [ $? -ne 0 ]; then
