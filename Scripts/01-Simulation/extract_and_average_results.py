@@ -77,8 +77,13 @@ def main():
     os.makedirs(DESTINATION_DIR, exist_ok=True)
     
     # List the conditions you want to process
-    CONDITIONS_TO_PROCESS = ["01_t1pheVTnoAM_t2socVTnoAM", "02_t1noVTpheAM_t2noVTnoAM", "03_t1noVTsocAM_t2noVTnoAM", "04_t1noVTgenAM_t2noVTnoAM"]
-    
+    #CONDITIONS_TO_PROCESS = ["01_t1pheVTnoAM_t2socVTnoAM", "02_t1noVTpheAM_t2noVTnoAM", "03_t1noVTsocAM_t2noVTnoAM", "04_t1noVTgenAM_t2noVTnoAM"]
+    CONDITIONS_TO_PROCESS = [
+        "05_t1pheVTnoAM_t2socVTnoAM_PGSall",
+        "06_t1noVTpheAM_t2noVTnoAM_PGSall",
+        "07_t1noVTsocAM_t2noVTnoAM_PGSall",
+        "08_t1noVTgenAM_t2noVTnoAM_PGSall"
+    ]
     # Configuration for the extraction
     GENERATIONS_TO_EXTRACT = [0, 1, 20]  # List of generations to extract
     MATRICES_TO_EXTRACT = ["VP", "VF","covI", "VAO", "VAL", "w", "v", "covG", "covH", "covF", "covE", "thetaNT", "thetaT"]
