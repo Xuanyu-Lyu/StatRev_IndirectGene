@@ -94,12 +94,24 @@ def main():
         "save_each_gen": True, "save_covs": False, "summary_file_scope": "all",
         "seed": 202506
     }
-    k2_val = np.array([[1.0, base_params["rg_effects"]], [base_params["rg_effects"], 1.0]]); d_mat_val = np.diag([np.sqrt(0.3), np.sqrt(0.3)]); a_mat_val = np.diag([np.sqrt(0.5), np.sqrt(0.5)]); fmat_val = np.array([[0,0],[0,0]]); s_mat_val = np.array([[0,0],[0,0]]); cove_val = np.array([[0.2, 0.05], [0.05, 0.2]]); covy_val = np.array([[1.0, 0.25], [0.25, 1.0]]); am_list_val = [np.array([[0.3, 0.05], [0.05, 0.3]])] * int(base_params["num_generations"])
+    k2_val = np.array([[1.0, base_params["rg_effects"]], [base_params["rg_effects"], 1.0]]); 
+    d_mat_val = np.diag([np.sqrt(0.3), np.sqrt(0.3)]); 
+    a_mat_val = np.diag([np.sqrt(0.5), np.sqrt(0.5)]); 
+    fmat_val = np.array([[0,0],[0,0]]); 
+    s_mat_val = np.array([[0,0],[0,0]]); 
+    cove_val = np.array([[0.2, 0.05], [0.05, 0.2]]); 
+    covy_val = np.array([[1.0, 0.25], [0.25, 1.0]]); 
+    am_list_val = [np.array([[0.3, 0.05], [0.05, 0.3]])] * int(base_params["num_generations"])
+    
     base_params.update({"k2_matrix": k2_val, "d_mat": d_mat_val, "a_mat": a_mat_val, "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val, "covy_mat": covy_val, "am_list": am_list_val})
     f_mat_condition_A = np.array([[.10,.15],[.05,.15]]); s_mat_condition_A = np.array([[0,0],[0,0]])
     f_mat_condition_B = np.array([[0,0],[0,0]]); s_mat_condition_B = np.array([[.3,.15],[.2,.35]])
-    f_mat_uni = np.array([[.3,0],[0,0]]); s_mat_uni = np.array([[0,0],[0,0.5]]); am_list_val_null = [np.array([[0,0], [0, 0]])] * int(base_params["num_generations"]); cove_val_uni = np.array([[0.2,0], [0, 0.2]])
-    am_list_val_uni = [np.array([[0.3,0], [0, 0.5]])] * int(base_params["num_generations"])
+    
+    f_mat_uni = np.array([[.3,0],[0,0]]); 
+    s_mat_uni = np.array([[0,0],[0,0.5]]); 
+    am_list_val_null = [np.array([[0,0], [0, 0]])] * int(base_params["num_generations"]); 
+    cove_val_uni = np.array([[0.2,0], [0, 0.2]])
+    am_list_val_uni = [np.array([[0.3,0], [0, 0]])] * int(base_params["num_generations"])
     # simulation_conditions = [
     #     #{"condition_name": "phenoVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_A, "s_mat": s_mat_condition_A}},
     #     #{"condition_name": "socialVT_phenoAM", "simulation_params": {**base_params, "mating_type": "phenotypic", "f_mat": f_mat_condition_B, "s_mat": s_mat_condition_B}},
@@ -124,7 +136,7 @@ def main():
         {"condition_name": "06_t1noVTpheAM_t2noVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
         {"condition_name": "07_t1noVTsocAM_t2noVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "social", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
         {"condition_name": "08_t1noVTgenAM_t2noVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "genotypic", "f_mat": fmat_val, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}},
-        
+        #{"condition_name": "09_t1pheVT_t2socVT_uniphenoAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}}
     ]
 
     # --- 3. Determine Which Batch This Slurm Task Will Run (unchanged) ---

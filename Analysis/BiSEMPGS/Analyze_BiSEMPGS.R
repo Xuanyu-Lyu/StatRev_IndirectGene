@@ -157,7 +157,7 @@ describe_df7$variable <- rownames(describe_df7)
 # describe_df4$condition <- "phenoVT_socialAM"
 describe_df5$condition <- "t1pheVT_t2socVT_uniphenoAM"
 describe_df6$condition <- "01_t1pheVTnoAM_t2socVTnoAM"
-describe_df7$condition <- "02_t1noVTpheAM_t2noVTnooAM"
+describe_df7$condition <- "02_t1noVTpheAM_t2noVTnoAM"
 
 # combine the dataframes
 describe_df <- rbind(describe_df5, describe_df6, describe_df7)
