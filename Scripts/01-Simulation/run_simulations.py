@@ -138,7 +138,7 @@ def main():
         {"condition_name": "05_t1pheVTnoAM_t2socVTnoAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_null}},
         {"condition_name": "06_t1noVTpheAM_t2pheVTpheAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_c6, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_c6}},
         {"condition_name": "07_t1noVTsocAM_t2pheVTsocAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "social", "f_mat": f_mat_c7, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_c7}},
-        {"condition_name": "08_t1noVTgenAM_t2pheVTgenAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "genotypic", "f_mat": f_mat_c8, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_c8}},
+        {"condition_name": "08_t1noVTgenAM_t2pheVTgenAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "genotypic", "f_mat": f_mat_c8, "s_mat": s_mat_val, "cove_mat": cove_val_uni, "am_list": am_list_val_c8}}
         #{"condition_name": "09_t1pheVT_t2socVT_uniphenoAM_PGSall", "simulation_params": {**base_params, "d_mat": d_mat_val_full, "a_mat": a_mat_val_full, "rg_effects": 0, "mating_type": "phenotypic", "f_mat": f_mat_uni, "s_mat": s_mat_uni, "cove_mat": cove_val_uni, "am_list": am_list_val_uni}}
     ]
 
