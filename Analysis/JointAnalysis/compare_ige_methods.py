@@ -43,11 +43,11 @@ def load_rdr_data(condition):
         return None
 
 
-def load_sembgs_data():
-    """Load SEM-PGS method results."""
+def load_sembgs_data(condition):
+    """Load SEM-PGS method results for the specified condition."""
     try:
-        # Load the processed BiSEMPGS data with phi/rho values
-        df = pd.read_csv('../BiSEMPGS/05_t1pheVTnoAM_t2socVTnoAM_PGSall_parameters_with_effects.csv')
+        # Load the processed BiSEMPGS data with phi/rho values for the specified condition
+        df = pd.read_csv(f'../BiSEMPGS/{condition}_parameters_with_effects.csv')
         print(f"SEM-PGS: Loaded {len(df)} rows with {len(df.columns)} columns")
         
         # Verify phi/rho columns are properly computed
@@ -311,7 +311,7 @@ def main():
         rdr_vg2, rdr_vg3 = None, None
     
     # 2. Load SEM-PGS data (direct IGE only)
-    sempgs_data = load_sembgs_data()
+    sempgs_data = load_sembgs_data(condition)
     if sempgs_data is not None:
         sempgs_direct = calculate_sempgs_ige_proportions(sempgs_data, trait)
     else:

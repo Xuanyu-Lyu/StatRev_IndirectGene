@@ -12,7 +12,7 @@ library(crayon)
 #                     #"04_t1noVTgenAM_t2noVTnoAM"
 #                     )
 #conditionNames <- c("01_t1pheVTnoAM_t2socVTnoAM", "02_t1noVTpheAM_t2noVTnoAM", "03_t1noVTsocAM_t2noVTnoAM", "04_t1noVTgenAM_t2noVTnoAM")
-conditionNames <- c("05_t1pheVTnoAM_t2socVTnoAM_PGSall", "06_t1noVTpheAM_t2noVTnoAM_PGSall", "07_t1noVTsocAM_t2noVTnoAM_PGSall", "08_t1noVTgenAM_t2noVTnoAM_PGSall")
+conditionNames <- c( "06_t1noVTpheAM_t2pheVTpheAM_PGSall", "07_t1noVTsocAM_t2pheVTsocAM_PGSall", "08_t1noVTgenAM_t2pheVTgenAM_PGSall")
 
 v_sample <- c(.8e4)
 folder_pattern <- paste0("nfam", v_sample)
@@ -23,7 +23,7 @@ save_pattern <- paste0("_", v_sample)
 # data_pattern <- c("_16000.txt", "_32000.txt", "_48000.txt",  "_64000.txt", "_80000.txt")
 # save_pattern <- c("_16000", "_32000", "_48000", "_64000", "_80000")
 
-for (i in 1:4){
+for (i in 2:4){
     for (j in 1:length(folder_pattern)){
         data_path <- paste0("Data/", conditionNames[i], "/", folder_pattern[j])
         l_files <- list.files(data_path, pattern = data_pattern[j])

@@ -187,9 +187,9 @@ def main():
     # Define conditions 5-8
     conditions = [
         '05_t1pheVTnoAM_t2socVTnoAM_PGSall',
-        '06_t1noVTpheAM_t2noVTnoAM_PGSall', 
-        '07_t1noVTsocAM_t2noVTnoAM_PGSall',
-        '08_t1noVTgenAM_t2noVTnoAM_PGSall'
+        '06_t1noVTpheAM_t2pheVTpheAM_PGSall', 
+        '07_t1noVTsocAM_t2pheVTsocAM_PGSall',
+        '08_t1noVTgenAM_t2pheVTgenAM_PGSall'
     ]
     
     # Define traits to analyze

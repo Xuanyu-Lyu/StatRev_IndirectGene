@@ -61,10 +61,10 @@ main <- function() {
     
     # Define conditions and their corresponding RDS files (conditions 5-8)
     conditions <- list(
-        "05_t1pheVTnoAM_t2socVTnoAM_PGSall" = "Analysis/BiSEMPGS/05_t1pheVTnoAM_t2socVTnoAM_PGSall_8000_summary_list.rds",
-        "06_t1noVTpheAM_t2noVTnoAM_PGSall" = "Analysis/BiSEMPGS/06_t1noVTpheAM_t2noVTnoAM_PGSall_8000_summary_list.rds",
-        "07_t1noVTsocAM_t2noVTnoAM_PGSall" = "Analysis/BiSEMPGS/07_t1noVTsocAM_t2noVTnoAM_PGSall_8000_summary_list.rds",
-        "08_t1noVTgenAM_t2noVTnoAM_PGSall" = "Analysis/BiSEMPGS/08_t1noVTgenAM_t2noVTnoAM_PGSall_8000_summary_list.rds"
+        #"05_t1pheVTnoAM_t2socVTnoAM_PGSall" = "Analysis/BiSEMPGS/05_t1pheVTnoAM_t2socVTnoAM_PGSall_8000_summary_list.rds",
+        "06_t1noVTpheAM_t2pheVTpheAM_PGSall" = "Analysis/BiSEMPGS/06_t1noVTpheAM_t2pheVTpheAM_PGSall_8000_summary_list.rds",
+        "07_t1noVTsocAM_t2pheVTsocAM_PGSall" = "Analysis/BiSEMPGS/07_t1noVTsocAM_t2pheVTsocAM_PGSall_8000_summary_list.rds",
+        "08_t1noVTgenAM_t2pheVTgenAM_PGSall" = "Analysis/BiSEMPGS/08_t1noVTgenAM_t2pheVTgenAM_PGSall_8000_summary_list.rds"
     )
     
     # Process each condition

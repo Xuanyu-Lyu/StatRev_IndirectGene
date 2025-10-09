@@ -163,9 +163,9 @@ def main():
     files_to_process = [
         ("all_conditions_parameters.csv", "all_conditions_parameters_with_effects.csv", "Combined conditions 5-8"),
         ("05_t1pheVTnoAM_t2socVTnoAM_PGSall_parameters.csv", "05_t1pheVTnoAM_t2socVTnoAM_PGSall_parameters_with_effects.csv", "Condition 5: 05_t1pheVTnoAM_t2socVTnoAM_PGSall"),
-        ("06_t1noVTpheAM_t2noVTnoAM_PGSall_parameters.csv", "06_t1noVTpheAM_t2noVTnoAM_PGSall_parameters_with_effects.csv", "Condition 6: 06_t1noVTpheAM_t2noVTnoAM_PGSall"),
-        ("07_t1noVTsocAM_t2noVTnoAM_PGSall_parameters.csv", "07_t1noVTsocAM_t2noVTnoAM_PGSall_parameters_with_effects.csv", "Condition 7: 07_t1noVTsocAM_t2noVTnoAM_PGSall"),
-        ("08_t1noVTgenAM_t2noVTnoAM_PGSall_parameters.csv", "08_t1noVTgenAM_t2noVTnoAM_PGSall_parameters_with_effects.csv", "Condition 8: 08_t1noVTgenAM_t2noVTnoAM_PGSall")
+        ("06_t1noVTpheAM_t2pheVTpheAM_PGSall_parameters.csv", "06_t1noVTpheAM_t2pheVTpheAM_PGSall_parameters_with_effects.csv", "Condition 6: 06_t1noVTpheAM_t2noVTnoAM_PGSall"),
+        ("07_t1noVTsocAM_t2pheVTsocAM_PGSall_parameters.csv", "07_t1noVTsocAM_t2pheVTsocAM_PGSall_parameters_with_effects.csv", "Condition 7: 07_t1noVTsocAM_t2noVTnoAM_PGSall"),
+        ("08_t1noVTgenAM_t2pheVTgenAM_PGSall_parameters.csv", "08_t1noVTgenAM_t2pheVTgenAM_PGSall_parameters_with_effects.csv", "Condition 8: 08_t1noVTgenAM_t2noVTnoAM_PGSall")
     ]
     
     processed_files = 0
