@@ -43,19 +43,28 @@ def load_rdr_data(condition):
         return None
 
 
-def load_sembgs_data(condition):
+def load_sempgs_data(condition):
     """Load SEM-PGS method results for the specified condition."""
     try:
-        # Load the processed BiSEMPGS data with phi/rho values for the specified condition
-        df = pd.read_csv(f'../BiSEMPGS/{condition}_parameters_with_effects.csv')
-        print(f"SEM-PGS: Loaded {len(df)} rows with {len(df.columns)} columns")
-        
-        # Verify phi/rho columns are properly computed
-        phi_cols = ['phi11', 'phi12', 'phi21', 'phi22']
-        valid_phi = df[phi_cols].notna().all(axis=1).sum()
-        print(f"SEM-PGS: {valid_phi}/{len(df)} rows have valid phi values")
-        
-        return df
+        # First try to load individual condition file
+        individual_file = f'../BiSEMPGS/{condition}_parameters_with_effects.csv'
+        try:
+            df = pd.read_csv(individual_file)
+            print(f"SEM-PGS: Loaded {len(df)} rows with {len(df.columns)} columns from individual file")
+            return df
+        except:
+            # Fall back to combined file and filter by condition
+            combined_file = '../BiSEMPGS/all_conditions_parameters.csv'
+            df_all = pd.read_csv(combined_file)
+            df = df_all[df_all['condition'] == condition] if 'condition' in df_all.columns else df_all
+            print(f"SEM-PGS: Loaded {len(df)} rows with {len(df.columns)} columns from combined file")
+            
+            if df.empty:
+                print(f"Warning: No SEM-PGS data found for condition {condition}")
+                print(f"Available conditions: {df_all['condition'].unique() if 'condition' in df_all.columns else 'No condition column'}")
+                return None
+            
+            return df
     except Exception as e:
         print(f"Error loading SEM-PGS data: {e}")
         return None
@@ -98,35 +107,37 @@ def calculate_rdr_ige_proportions(rdr_data, trait):
 
 
 def calculate_sempgs_ige_proportions(sempgs_data, trait):
-    """Calculate direct IGE proportions from SEM-PGS data (phi only)."""
+    """Calculate direct IGE proportions from SEM-PGS data using f parameters."""
     try:
         trait_suffix = f'{trait}{trait}'  # e.g., '11' for trait 1, '22' for trait 2
         
-        # Get phi (observed IGE) and total phenotypic variance - only direct IGE
-        phi_col = f'phi{trait_suffix}'
-        vy_col = f'VY{trait_suffix}'
+        # Get genetic nurture effect (f parameter) and total phenotypic variance
+        f_col = f'phi{trait_suffix}'  # f11 for trait 1, f22 for trait 2
+        vy_col = f'VY{trait_suffix}'  # VY11 for trait 1, VY22 for trait 2
         
-        if not all(col in sempgs_data.columns for col in [phi_col, vy_col]):
+        if not all(col in sempgs_data.columns for col in [f_col, vy_col]):
             print(f"Warning: Missing required SEM-PGS columns for trait {trait}")
-            print(f"Available columns: {[col for col in sempgs_data.columns if 'phi' in col or 'VY' in col]}")
+            print(f"Looking for: {f_col}, {vy_col}")
+            print(f"Available columns: {[col for col in sempgs_data.columns if 'f' in col.lower() or 'vy' in col.lower()]}")
             return None
         
         # Calculate IGE proportions, filtering out invalid values
-        phi_vals = sempgs_data[phi_col].values
+        f_vals = sempgs_data[f_col].values
         vy_vals = sempgs_data[vy_col].values
         
         # Filter out rows with NaN or zero VY values
-        valid_mask = ~(np.isnan(phi_vals) | np.isnan(vy_vals) | (vy_vals == 0))
+        valid_mask = ~(np.isnan(f_vals) | np.isnan(vy_vals) | (vy_vals == 0))
         
         if not np.any(valid_mask):
             print(f"Warning: No valid SEM-PGS data for trait {trait}")
             return None
         
-        phi_vals = phi_vals[valid_mask]
+        f_vals = f_vals[valid_mask]
         vy_vals = vy_vals[valid_mask]
         
-        # Direct IGE (observed only)
-        direct_ige = phi_vals / vy_vals
+        # Direct IGE proportion: genetic nurture effect / total phenotypic variance
+        # Note: f parameter represents the genetic nurture pathway strength
+        direct_ige = np.abs(f_vals) / vy_vals  # Take absolute value for proportion
         
         return direct_ige
     except Exception as e:
@@ -311,7 +322,7 @@ def main():
         rdr_vg2, rdr_vg3 = None, None
     
     # 2. Load SEM-PGS data (direct IGE only)
-    sempgs_data = load_sembgs_data(condition)
+    sempgs_data = load_sempgs_data(condition)
     if sempgs_data is not None:
         sempgs_direct = calculate_sempgs_ige_proportions(sempgs_data, trait)
     else:
