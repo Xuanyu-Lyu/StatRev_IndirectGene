@@ -12,7 +12,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4      # Reduced CPUs since Python regression is less parallel than GCTA
 #SBATCH --mem=32G              # Reduced memory requirement for Python regression
-#SBATCH --time=0-06:00:00      # Reduced time since Python regression is typically faster
+#SBATCH --time=0-01:00:00      # Reduced time since Python regression is typically faster
 
 # --- Define the array size ---
 #SBATCH --array=1-1000%25      # Process 1000 runs with max 25 concurrent jobs
@@ -36,15 +36,15 @@ chmod +x run_rdr_regression.py
 
 # --- Define the list of conditions to run ---
 CONDITIONS=(
-    "phenoVT_phenoAM"
-    "socialVT_phenoAM"
-    "phenoVT_socialAM"
-    "phenoVT_geneticAM"
-    "t1pheVT_t2socVT_uniphenoAM"
-    "01_t1pheVTnoAM_t2socVTnoAM"
-    "02_t1noVTpheAM_t2noVTnoAM"
-    "03_t1noVTsocAM_t2noVTnoAM"
-    "04_t1noVTgenAM_t2noVTnoAM"
+    #"phenoVT_phenoAM"
+    #"socialVT_phenoAM"
+    #"phenoVT_socialAM"
+    #"phenoVT_geneticAM"
+    #"t1pheVT_t2socVT_uniphenoAM"
+    #"01_t1pheVTnoAM_t2socVTnoAM"
+    #"02_t1noVTpheAM_t2noVTnoAM"
+    #"03_t1noVTsocAM_t2noVTnoAM"
+    #"04_t1noVTgenAM_t2noVTnoAM"
     "05_t1pheVTnoAM_t2socVTnoAM_PGSall"
     "06_t1noVTpheAM_t2pheVTpheAM_PGSall"
     "07_t1noVTsocAM_t2pheVTsocAM_PGSall"

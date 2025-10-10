@@ -13,10 +13,10 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4      # Reduced CPUs since Python regression is less parallel than GCTA
 #SBATCH --mem=32G              # Reduced memory requirement for Python regression
-#SBATCH --time=0-06:00:00      # Reduced time since Python regression is typically faster
+#SBATCH --time=0-1:00:00      # Reduced time since Python regression is typically faster
 
 # --- Define the array size ---
-#SBATCH --array=1-50%10        # Test with 50 runs and max 10 concurrent jobs
+#SBATCH --array=1-4%2        # Test with 50 runs and max 10 concurrent jobs
 
 #SBATCH --job-name=rdr_regression_test
 #SBATCH --output=slurm_logs/rdr_regression_test_%A_%a.out
