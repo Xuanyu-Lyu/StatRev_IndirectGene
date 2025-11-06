@@ -3,10 +3,10 @@
 IGE Methods Comparison Script
 
 This script compares four methods for estimating indirect genetic effects (IGE):
-1. RDR (Relatedness Disequilibrium Regression)
-2. SEM-PGS (Structural Equation Modeling with PGS)
-3. Full PGS Regression
-4. Kong's Haplotypic PGS Regression
+1. SEM-PGS (Structural Equation Modeling with PGS) - Direct IGE
+2. Full PGS Regression
+3. Kong's Haplotypic PGS Regression
+4. RDR (Relatedness Disequilibrium Regression) - VG2 parameter
 
 Usage:
     python compare_ige_methods.py --condition 05_t1pheVTnoAM_t2socVTnoAM_PGSall --trait 1
@@ -44,14 +44,17 @@ def load_rdr_data(condition):
 
 
 def load_sempgs_data(condition):
-    """Load SEM-PGS method results for the specified condition."""
+    """Load SEM-PGS method results for the specified condition.
+    
+    Automatically filters out extreme outliers (>5 SD from mean) for diagonal phi parameters:
+    phi11, phi22, phi2_11, phi2_22 only.
+    """
     try:
         # First try to load individual condition file
         individual_file = f'../BiSEMPGS/{condition}_parameters_with_effects.csv'
         try:
             df = pd.read_csv(individual_file)
             print(f"SEM-PGS: Loaded {len(df)} rows with {len(df.columns)} columns from individual file")
-            return df
         except:
             # Fall back to combined file and filter by condition
             combined_file = '../BiSEMPGS/all_conditions_parameters.csv'
@@ -63,8 +66,45 @@ def load_sempgs_data(condition):
                 print(f"Warning: No SEM-PGS data found for condition {condition}")
                 print(f"Available conditions: {df_all['condition'].unique() if 'condition' in df_all.columns else 'No condition column'}")
                 return None
+        
+        # Filter out extreme values (5 SD away from mean) for specific phi parameters only
+        original_rows = len(df)
+        
+        # Define specific parameters to check for outliers (only diagonal phi terms)
+        key_params = []
+        for param in ['phi11', 'phi22', 'phi2_11', 'phi2_22']:
+            if param in df.columns:
+                key_params.append(param)
+        
+        if key_params:
+            # Create a mask for rows to keep (not extreme outliers)
+            keep_mask = pd.Series(True, index=df.index)
             
+            for param in key_params:
+                if df[param].dtype in ['float64', 'int64'] and not df[param].isna().all():
+                    mean_val = df[param].mean()
+                    std_val = df[param].std()
+                    
+                    if std_val > 0:  # Only filter if there's variation
+                        # Calculate z-scores
+                        z_scores = np.abs((df[param] - mean_val) / std_val)
+                        # Keep rows where z-score < 5 or value is NaN
+                        param_mask = (z_scores < 4) | df[param].isna()
+                        keep_mask = keep_mask & param_mask
+            
+            # Apply the filter
+            df_filtered = df[keep_mask].copy()
+            filtered_rows = original_rows - len(df_filtered)
+            
+            if filtered_rows > 0:
+                print(f"SEM-PGS: Filtered out {filtered_rows} extreme outliers (>5 SD from mean) in phi11, phi22, phi2_11, phi2_22")
+                print(f"SEM-PGS: Remaining {len(df_filtered)} rows after outlier removal")
+            
+            return df_filtered
+        else:
+            print("SEM-PGS: No key parameters found for outlier filtering")
             return df
+            
     except Exception as e:
         print(f"Error loading SEM-PGS data: {e}")
         return None
@@ -88,60 +128,96 @@ def load_pgs_regression_data(condition, trait, analysis_type):
 
 
 def calculate_rdr_ige_proportions(rdr_data, trait):
-    """Calculate IGE proportions from RDR data - returns both VG2 and VG3 parameters."""
+    """Calculate IGE proportions from RDR data - returns only VG2 parameter."""
     try:
         # Filter for the specific trait
         trait_data = rdr_data[rdr_data['trait'] == f'Y{trait}']
         
         if trait_data.empty:
-            return None, None
+            return None
         
-        # Return both VG2_Vp_est (second parameter) and VG3_Vp_est (third parameter)
+        # Return only VG2_Vp_est (second parameter)
         vg2_proportions = trait_data['VG2_Vp_est'].values
-        vg3_proportions = trait_data['VG3_Vp_est'].values
         
-        return vg2_proportions, vg3_proportions
+        return vg2_proportions
     except Exception as e:
         print(f"Error calculating RDR IGE proportions: {e}")
-        return None, None
+        return None
 
 
 def calculate_sempgs_ige_proportions(sempgs_data, trait):
-    """Calculate direct IGE proportions from SEM-PGS data using f parameters."""
+    """Calculate direct IGE proportions from SEM-PGS data using phi parameters."""
     try:
         trait_suffix = f'{trait}{trait}'  # e.g., '11' for trait 1, '22' for trait 2
         
-        # Get genetic nurture effect (f parameter) and total phenotypic variance
-        f_col = f'phi{trait_suffix}'  # f11 for trait 1, f22 for trait 2
+        # Get genetic nurture effect (phi parameter) and total phenotypic variance
+        phi_col = f'phi{trait_suffix}'  # phi11 for trait 1, phi22 for trait 2
         vy_col = f'VY{trait_suffix}'  # VY11 for trait 1, VY22 for trait 2
         
-        if not all(col in sempgs_data.columns for col in [f_col, vy_col]):
+        if not all(col in sempgs_data.columns for col in [phi_col, vy_col]):
             print(f"Warning: Missing required SEM-PGS columns for trait {trait}")
-            print(f"Looking for: {f_col}, {vy_col}")
-            print(f"Available columns: {[col for col in sempgs_data.columns if 'f' in col.lower() or 'vy' in col.lower()]}")
+            print(f"Looking for: {phi_col}, {vy_col}")
+            print(f"Available columns: {[col for col in sempgs_data.columns if 'phi' in col.lower() or 'vy' in col.lower()]}")
             return None
         
         # Calculate IGE proportions, filtering out invalid values
-        f_vals = sempgs_data[f_col].values
+        phi_vals = sempgs_data[phi_col].values
         vy_vals = sempgs_data[vy_col].values
         
         # Filter out rows with NaN or zero VY values
-        valid_mask = ~(np.isnan(f_vals) | np.isnan(vy_vals) | (vy_vals == 0))
+        valid_mask = ~(np.isnan(phi_vals) | np.isnan(vy_vals) | (vy_vals == 0))
         
         if not np.any(valid_mask):
             print(f"Warning: No valid SEM-PGS data for trait {trait}")
             return None
         
-        f_vals = f_vals[valid_mask]
+        phi_vals = phi_vals[valid_mask]
         vy_vals = vy_vals[valid_mask]
         
-        # Direct IGE proportion: genetic nurture effect / total phenotypic variance
-        # Note: f parameter represents the genetic nurture pathway strength
-        direct_ige = np.abs(f_vals) / vy_vals  # Take absolute value for proportion
+        # Direct IGE proportion: phi / total phenotypic variance
+        direct_ige = np.abs(phi_vals) / vy_vals  # Take absolute value for proportion
         
         return direct_ige
     except Exception as e:
         print(f"Error calculating SEM-PGS IGE proportions: {e}")
+        return None
+
+
+def calculate_sempgs_phi2_ige_proportions(sempgs_data, trait):
+    """Calculate extended IGE proportions from SEM-PGS data using phi2 parameters."""
+    try:
+        trait_suffix = f'{trait}{trait}'  # e.g., '11' for trait 1, '22' for trait 2
+        
+        # Get extended genetic nurture effect (phi2 parameter) and total phenotypic variance
+        phi2_col = f'phi2_{trait_suffix}'  # phi2_11 for trait 1, phi2_22 for trait 2
+        vy_col = f'VY{trait_suffix}'  # VY11 for trait 1, VY22 for trait 2
+        
+        if not all(col in sempgs_data.columns for col in [phi2_col, vy_col]):
+            print(f"Warning: Missing required SEM-PGS phi2 columns for trait {trait}")
+            print(f"Looking for: {phi2_col}, {vy_col}")
+            print(f"Available columns: {[col for col in sempgs_data.columns if 'phi2' in col.lower() or 'vy' in col.lower()]}")
+            return None
+        
+        # Calculate IGE proportions, filtering out invalid values
+        phi2_vals = sempgs_data[phi2_col].values
+        vy_vals = sempgs_data[vy_col].values
+        
+        # Filter out rows with NaN or zero VY values
+        valid_mask = ~(np.isnan(phi2_vals) | np.isnan(vy_vals) | (vy_vals == 0))
+        
+        if not np.any(valid_mask):
+            print(f"Warning: No valid SEM-PGS phi2 data for trait {trait}")
+            return None
+        
+        phi2_vals = phi2_vals[valid_mask]
+        vy_vals = vy_vals[valid_mask]
+        
+        # Extended IGE proportion: phi2 / total phenotypic variance
+        extended_ige = np.abs(phi2_vals) / vy_vals  # Take absolute value for proportion
+        
+        return extended_ige
+    except Exception as e:
+        print(f"Error calculating SEM-PGS phi2 IGE proportions: {e}")
         return None
 
 
@@ -176,7 +252,7 @@ def calculate_fullpgs_ige_proportions(fullpgs_data, trait):
         father_incr = father_incr[valid_mask]
         
         # IGE proportion is the sum of incremental R² from both parents
-        ige_proportions = mother_incr + father_incr
+        ige_proportions = (mother_incr + father_incr)
         
         return ige_proportions
     except Exception as e:
@@ -212,7 +288,7 @@ def calculate_kong_ige_proportions(kong_data, trait):
         ntp_r2 = ntp_r2[valid_mask]
         
         # Total IGE proportion is the sum of maternal and paternal non-transmitted effects
-        ige_proportions = ntm_r2 + ntp_r2
+        ige_proportions = (ntm_r2 + ntp_r2)
         
         return ige_proportions
     except Exception as e:
@@ -220,14 +296,17 @@ def calculate_kong_ige_proportions(kong_data, trait):
         return None
 
 
-def create_violin_plot(data_dict, condition, trait, save_path=None):
-    """Create violin plot comparing the four methods."""
+def create_violin_plot(data_dict, condition, trait, save_path=None, true_values_pure=None, true_values_final=None):
+    """Create violin plot comparing the methods."""
     
-    # Prepare data for plotting
+    # Define the order of methods as requested
+    method_order = ['SEM-PGS Direct', 'SEM-PGS phi2', 'Full PGS', 'Kong PGS', 'RDR VG2']
+    
+    # Prepare data for plotting in the specified order
     plot_data = []
-    for method, values in data_dict.items():
-        if values is not None and len(values) > 0:
-            for val in values:
+    for method in method_order:
+        if method in data_dict and data_dict[method] is not None and len(data_dict[method]) > 0:
+            for val in data_dict[method]:
                 if not np.isnan(val):
                     plot_data.append({'Method': method, 'IGE_Proportion': val})
     
@@ -242,16 +321,17 @@ def create_violin_plot(data_dict, condition, trait, save_path=None):
     
     # Define colors for each method
     method_colors = {
-        'RDR VG2': '#d62728',
-        'RDR VG3': '#b91c1c',
         'SEM-PGS Direct': '#9467bd',
+        'SEM-PGS phi2': '#8c564b',
         'Full PGS': '#ff7f0e',
-        'Kong PGS': '#2ca02c'
+        'Kong PGS': '#2ca02c',
+        'RDR VG2': '#d62728'
     }
     
-    # Create violin plot
+    # Create violin plot with specified method order
     ax = sns.violinplot(data=df_plot, x='Method', y='IGE_Proportion', 
-                       palette=[method_colors.get(method, '#666666') for method in df_plot['Method'].unique()],
+                       order=method_order,
+                       palette=[method_colors.get(method, '#666666') for method in method_order if method in df_plot['Method'].unique()],
                        inner='box')
     
     # Customize the plot
@@ -266,19 +346,64 @@ def create_violin_plot(data_dict, condition, trait, save_path=None):
     # Add grid
     plt.grid(True, alpha=0.3, axis='y')
     
-    # Add summary statistics as text (using median instead of mean)
-    summary_text = []
-    for method in df_plot['Method'].unique():
-        method_data = df_plot[df_plot['Method'] == method]['IGE_Proportion']
-        median_val = method_data.median()
-        std_val = method_data.std()
-        n_val = len(method_data)
-        summary_text.append(f'{method}: med={median_val:.4f}, σ={std_val:.4f}, n={n_val}')
+    # Add horizontal dashed lines for true values if provided
+    if true_values_pure is not None or true_values_final is not None:
+        # Extract condition and trait info to get appropriate true values
+        condition_parts = condition.split('_')
+        
+        # Map condition to the true value keys
+        if '05_' in condition:
+            if trait == 1:
+                true_key = '05_t1pheVTnoAM'
+            else:
+                true_key = '05_t2socVTnoAM'
+        elif '06_' in condition:
+            if trait == 1:
+                true_key = '06_t1noVTpheAM'
+            else:
+                true_key = '06_t2pheVTpheAM'
+        elif '07_' in condition:
+            if trait == 1:
+                true_key = '07_t1noVTnoAM'
+            else:
+                true_key = '07_t2pheVTsocAM'
+        elif '08_' in condition:
+            if trait == 1:
+                true_key = '08_t1noVTgenAM'
+            else:
+                true_key = '08_t2pheVTgenAM'
+        else:
+            true_key = None
+        
+        # Add dashed lines for true values
+        if true_key and true_values_pure is not None and true_key in true_values_pure:
+            ax.axhline(y=true_values_pure[true_key], color='red', linestyle='--', 
+                      linewidth=2, alpha=0.8, label=f'True Pure IGE: {true_values_pure[true_key]:.4f}')
+        
+        if true_key and true_values_final is not None and true_key in true_values_final:
+            ax.axhline(y=true_values_final[true_key], color='blue', linestyle='--', 
+                      linewidth=2, alpha=0.8, label=f'True Final IGE: {true_values_final[true_key]:.4f}')
+        
+        # Add legend if true values were added
+        if (true_key and 
+            ((true_values_pure is not None and true_key in true_values_pure) or 
+             (true_values_final is not None and true_key in true_values_final))):
+            ax.legend(loc='upper right', fontsize=10)
     
-    # Add summary text box
+    # Add summary statistics as text (using median instead of mean) in specified order
+    summary_text = []
+    for method in method_order:
+        if method in df_plot['Method'].unique():
+            method_data = df_plot[df_plot['Method'] == method]['IGE_Proportion']
+            median_val = method_data.median()
+            std_val = method_data.std()
+            n_val = len(method_data)
+            summary_text.append(f'{method}: med={median_val:.4f}, σ={std_val:.4f}, n={n_val}')
+    
+    # Add summary text box with increased font size
     textstr = '\n'.join(summary_text)
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.8)
-    ax.text(0.02, 0.98, textstr, transform=ax.transAxes, fontsize=9,
+    ax.text(0.02, 0.98, textstr, transform=ax.transAxes, fontsize=11,
             verticalalignment='top', bbox=props)
     
     # Adjust layout
@@ -317,16 +442,18 @@ def main():
     # 1. Load RDR data
     rdr_data = load_rdr_data(condition)
     if rdr_data is not None:
-        rdr_vg2, rdr_vg3 = calculate_rdr_ige_proportions(rdr_data, trait)
+        rdr_vg2 = calculate_rdr_ige_proportions(rdr_data, trait)
     else:
-        rdr_vg2, rdr_vg3 = None, None
+        rdr_vg2 = None
     
-    # 2. Load SEM-PGS data (direct IGE only)
+    # 2. Load SEM-PGS data (direct IGE and phi2)
     sempgs_data = load_sempgs_data(condition)
     if sempgs_data is not None:
         sempgs_direct = calculate_sempgs_ige_proportions(sempgs_data, trait)
+        sempgs_phi2 = calculate_sempgs_phi2_ige_proportions(sempgs_data, trait)
     else:
         sempgs_direct = None
+        sempgs_phi2 = None
     
     # 3. Load Full PGS data
     fullpgs_data = load_pgs_regression_data(condition, trait, 'full_pgs')
@@ -336,20 +463,16 @@ def main():
     kong_data = load_pgs_regression_data(condition, trait, 'kong')
     kong_ige = calculate_kong_ige_proportions(kong_data, trait) if kong_data is not None else None
     
-    # Prepare data dictionary
+    # Prepare data dictionary with only the four requested methods
     data_dict = {}
-    
-    if rdr_vg2 is not None:
-        data_dict['RDR VG2'] = rdr_vg2
-        print(f"RDR VG2: {len(rdr_vg2)} observations, median={np.median(rdr_vg2):.4f}")
-    
-    if rdr_vg3 is not None:
-        data_dict['RDR VG3'] = rdr_vg3
-        print(f"RDR VG3: {len(rdr_vg3)} observations, median={np.median(rdr_vg3):.4f}")
     
     if sempgs_direct is not None:
         data_dict['SEM-PGS Direct'] = sempgs_direct
         print(f"SEM-PGS Direct: {len(sempgs_direct)} observations, median={np.median(sempgs_direct):.4f}")
+    
+    if sempgs_phi2 is not None:
+        data_dict['SEM-PGS phi2'] = sempgs_phi2
+        print(f"SEM-PGS phi2: {len(sempgs_phi2)} observations, median={np.median(sempgs_phi2):.4f}")
     
     if fullpgs_ige is not None:
         data_dict['Full PGS'] = fullpgs_ige
@@ -358,6 +481,10 @@ def main():
     if kong_ige is not None:
         data_dict['Kong PGS'] = kong_ige
         print(f"Kong PGS: {len(kong_ige)} observations, median={np.median(kong_ige):.4f}")
+    
+    if rdr_vg2 is not None:
+        data_dict['RDR VG2'] = rdr_vg2
+        print(f"RDR VG2: {len(rdr_vg2)} observations, median={np.median(rdr_vg2):.4f}")
     
     # Create violin plot
     print("\nCreating violin plot...")

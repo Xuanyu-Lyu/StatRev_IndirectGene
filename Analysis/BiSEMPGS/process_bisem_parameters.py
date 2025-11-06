@@ -8,6 +8,8 @@ and computes genetic nurture effects (phi and rho variables).
 The genetic nurture effects are computed as:
 - phi = 4*f*delta*k*delta'*f' (pure observed genetic nurture effects)
 - rho = 4*f*a*j*a'*f' (pure latent genetic nurture effects)
+- phi2 = 4*f*delta*k*delta'*f' + 16*f*delta*gc*delta'*f' (extended observed genetic nurture effects)
+- rho2 = 4*f*a*j*a'*f' + 16*f*a*hc*a'*f' (extended latent genetic nurture effects)
 
 where:
 - f is the factor loading matrix (f11, f12, f21, f22)
@@ -15,6 +17,8 @@ where:
 - k is the genetic correlation matrix (k11, k12, k22)
 - a is the square root of the latent heritability matrix (a11, a22)
 - j is the latent genetic correlation matrix (assumed same as k)
+- gc is the genetic correlation matrix for observed effects (gc11, gc12, gc22) - symmetric
+- hc is the genetic correlation matrix for latent effects (hc11, hc12, hc22) - symmetric
 """
 
 import pandas as pd
@@ -31,12 +35,18 @@ def compute_genetic_nurture_effects(df):
         
     Returns:
         DataFrame with added phi and rho columns
+        
+    Note:
+        Rows with missing parameters or any negative f variables (f11, f12, f21, f22) 
+        are excluded from calculations.
     """
     
     print(f"Computing genetic nurture effects for {len(df)} rows...")
     
     # Required parameter columns
     required_params = ['f11', 'f12', 'f21', 'f22', 'delta11', 'delta22', 'a11', 'a22', 'k11', 'k12', 'k22']
+    # Optional parameters for phi2 and rho2 calculations
+    optional_params = ['gc11', 'gc12', 'gc22', 'hc11', 'hc12', 'hc22']
     
     # Check if all required parameters exist
     missing_params = [param for param in required_params if param not in df.columns]
@@ -55,10 +65,21 @@ def compute_genetic_nurture_effects(df):
         df.loc[df['k22'].isna(), 'k22'] = 0.5
 
     successful_computations = 0
+    negative_f_filtered = 0
     
-    # Initialize phi and rho columns
-    for col in ['phi11', 'phi12', 'phi21', 'phi22', 'rho11', 'rho12', 'rho21', 'rho22']:
+    # Initialize phi, rho, phi2, and rho2 columns
+    for col in ['phi11', 'phi12', 'phi21', 'phi22', 'rho11', 'rho12', 'rho21', 'rho22',
+               'phi2_11', 'phi2_12', 'phi2_21', 'phi2_22', 'rho2_11', 'rho2_12', 'rho2_21', 'rho2_22']:
         df[col] = np.nan
+    
+    # Check availability of gc and hc parameters for phi2/rho2 calculations
+    gc_available = all(param in df.columns for param in ['gc11', 'gc12', 'gc22'])
+    hc_available = all(param in df.columns for param in ['hc11', 'hc12', 'hc22'])
+    
+    if not gc_available:
+        print("Warning: gc parameters (gc11, gc12, gc22) not found. phi2 will not be computed.")
+    if not hc_available:
+        print("Warning: hc parameters (hc11, hc12, hc22) not found. rho2 will not be computed.")
     
     # Compute genetic nurture effects for each row
     for i in range(len(df)):
@@ -69,6 +90,14 @@ def compute_genetic_nurture_effects(df):
             a11, a22 = df.iloc[i]['a11'], df.iloc[i]['a22']
             k11, k12, k22 = df.iloc[i]['k11'], df.iloc[i]['k12'], df.iloc[i]['k22']
             
+            # Extract optional parameters for phi2 and rho2 calculations
+            gc11 = df.iloc[i]['gc11'] if 'gc11' in df.columns else np.nan
+            gc12 = df.iloc[i]['gc12'] if 'gc12' in df.columns else np.nan
+            gc22 = df.iloc[i]['gc22'] if 'gc22' in df.columns else np.nan
+            hc11 = df.iloc[i]['hc11'] if 'hc11' in df.columns else np.nan
+            hc12 = df.iloc[i]['hc12'] if 'hc12' in df.columns else np.nan
+            hc22 = df.iloc[i]['hc22'] if 'hc22' in df.columns else np.nan
+            
             # Debug first few rows
             if i < 3:
                 print(f"Row {i} parameters:")
@@ -76,6 +105,10 @@ def compute_genetic_nurture_effects(df):
                 print(f"  delta: {delta11}, {delta22}")
                 print(f"  a: {a11}, {a22}")
                 print(f"  k: {k11}, {k12}, {k22}")
+                if gc_available:
+                    print(f"  gc: {gc11}, {gc12}, {gc22}")
+                if hc_available:
+                    print(f"  hc: {hc11}, {hc12}, {hc22}")
             
             # Check for missing values
             params = [f11, f12, f21, f22, delta11, delta22, a11, a22, k11, k12, k22]
@@ -85,6 +118,15 @@ def compute_genetic_nurture_effects(df):
                     param_names = ['f11', 'f12', 'f21', 'f22', 'delta11', 'delta22', 'a11', 'a22', 'k11', 'k12', 'k22']
                     print(f"Row {i}: Missing parameters: {[param_names[j] for j in missing]}")
                 continue
+            
+            # # Filter out cases with any negative f variables
+            # f_vars = [f11, f22]
+            # if any(f < 0 for f in f_vars):
+            #     negative_f_filtered += 1
+            #     if i < 3:
+            #         negative_f = [f"f{idx//2+1}{idx%2+1}" for idx, f in enumerate(f_vars) if f < 0]
+            #         print(f"Row {i}: Negative f parameters detected: {negative_f}, skipping row")
+            #     continue
             
             # Create matrices from the estimates
             f_mat = np.array([[f11, f12], 
@@ -116,9 +158,39 @@ def compute_genetic_nurture_effects(df):
             df.loc[i, 'rho21'] = rho_mat[1, 0]
             df.loc[i, 'rho22'] = rho_mat[1, 1]
             
+            # Compute phi2 if gc parameters are available
+            if gc_available and not any(pd.isna([gc11, gc12, gc22])):
+                gc_mat = np.array([[gc11, gc12], 
+                                  [gc12, gc22]])
+                
+                # phi2 = 4*f*delta*k*delta'*f' + 16*f*delta*gc*delta'*f'
+                phi2_mat = (f_mat @ delta_mat @ k_mat @ delta_mat.T @ f_mat.T * 4 + 
+                           f_mat @ delta_mat @ gc_mat @ delta_mat.T @ f_mat.T * 12)
+                df.loc[i, 'phi2_11'] = phi2_mat[0, 0]
+                df.loc[i, 'phi2_12'] = phi2_mat[0, 1]
+                df.loc[i, 'phi2_21'] = phi2_mat[1, 0]
+                df.loc[i, 'phi2_22'] = phi2_mat[1, 1]
+            
+            # Compute rho2 if hc parameters are available
+            if hc_available and not any(pd.isna([hc11, hc12, hc22])):
+                hc_mat = np.array([[hc11, hc12], 
+                                  [hc12, hc22]])
+                
+                # rho2 = 4*f*a*j*a'*f' + 16*f*a*hc*a'*f'
+                rho2_mat = (f_mat @ a_mat @ j_mat @ a_mat.T @ f_mat.T * 4 + 
+                           f_mat @ a_mat @ hc_mat @ a_mat.T @ f_mat.T * 12)
+                df.loc[i, 'rho2_11'] = rho2_mat[0, 0]
+                df.loc[i, 'rho2_12'] = rho2_mat[0, 1]
+                df.loc[i, 'rho2_21'] = rho2_mat[1, 0]
+                df.loc[i, 'rho2_22'] = rho2_mat[1, 1]
+            
             if i < 3:
                 print(f"Row {i} results: phi11={phi_mat[0, 0]:.6f}, phi12={phi_mat[0, 1]:.6f}")
                 print(f"Row {i} results: rho11={rho_mat[0, 0]:.6f}, rho12={rho_mat[0, 1]:.6f}")
+                if gc_available and not any(pd.isna([gc11, gc12, gc22])):
+                    print(f"Row {i} results: phi2_11={phi2_mat[0, 0]:.6f}, phi2_12={phi2_mat[0, 1]:.6f}")
+                if hc_available and not any(pd.isna([hc11, hc12, hc22])):
+                    print(f"Row {i} results: rho2_11={rho2_mat[0, 0]:.6f}, rho2_12={rho2_mat[0, 1]:.6f}")
             
             successful_computations += 1
             
@@ -127,6 +199,8 @@ def compute_genetic_nurture_effects(df):
             continue
     
     print(f"Successfully computed genetic nurture effects for {successful_computations}/{len(df)} rows")
+    if negative_f_filtered > 0:
+        print(f"Filtered out {negative_f_filtered} rows due to negative f parameters")
     
     return df
 
@@ -147,8 +221,20 @@ def process_file(input_file, output_file):
     
     # Print summary statistics
     phi_rho_cols = ['phi11', 'phi12', 'phi21', 'phi22', 'rho11', 'rho12', 'rho21', 'rho22']
+    phi2_rho2_cols = ['phi2_11', 'phi2_12', 'phi2_21', 'phi2_22', 'rho2_11', 'rho2_12', 'rho2_21', 'rho2_22']
+    
     print("Summary of genetic nurture effects:")
     print(df_with_effects[phi_rho_cols].describe())
+    
+    # Check if phi2/rho2 were computed and show their summaries
+    phi2_computed = df_with_effects[['phi2_11', 'phi2_12', 'phi2_21', 'phi2_22']].notna().any().any()
+    rho2_computed = df_with_effects[['rho2_11', 'rho2_12', 'rho2_21', 'rho2_22']].notna().any().any()
+    
+    if phi2_computed or rho2_computed:
+        print("\nSummary of extended genetic nurture effects (phi2/rho2):")
+        available_cols = [col for col in phi2_rho2_cols if df_with_effects[col].notna().any()]
+        if available_cols:
+            print(df_with_effects[available_cols].describe())
     
     return df_with_effects
 
@@ -161,11 +247,11 @@ def main():
     
     # Define the files to process
     files_to_process = [
-        ("Analysis/BiSEMPGS/05_t1pheVTnoAM_t2socVTnoAM_PGSall_parameters.csv", "all_conditions_parameters_with_effects.csv", "Combined conditions 5-8"),
-        ("Analysis/BiSEMPGS/05_t1pheVTnoAM_t2socVTnoAM_PGSall_parameters.csv", "05_t1pheVTnoAM_t2socVTnoAM_PGSall_parameters_with_effects.csv", "Condition 5: 05_t1pheVTnoAM_t2socVTnoAM_PGSall"),
-        ("Analysis/BiSEMPGS/06_t1noVTpheAM_t2pheVTpheAM_PGSall_parameters.csv", "06_t1noVTpheAM_t2pheVTpheAM_PGSall_parameters_with_effects.csv", "Condition 6: 06_t1noVTpheAM_t2pheVTpheAM_PGSall"),
-        ("Analysis/BiSEMPGS/07_t1noVTsocAM_t2pheVTsocAM_PGSall_parameters.csv", "07_t1noVTsocAM_t2pheVTsocAM_PGSall_parameters_with_effects.csv", "Condition 7: 07_t1noVTsocAM_t2pheVTsocAM_PGSall"),
-        ("Analysis/BiSEMPGS/08_t1noVTgenAM_t2pheVTgenAM_PGSall_parameters.csv", "08_t1noVTgenAM_t2pheVTgenAM_PGSall_parameters_with_effects.csv", "Condition 8: 08_t1noVTgenAM_t2pheVTgenAM_PGSall")
+        ("Analysis/BiSEMPGS/05_t1pheVTnoAM_t2socVTnoAM_PGSall_parameters.csv", "Analysis/BiSEMPGS/all_conditions_parameters_with_effects.csv", "Combined conditions 5-8"),
+        ("Analysis/BiSEMPGS/05_t1pheVTnoAM_t2socVTnoAM_PGSall_parameters.csv", "Analysis/BiSEMPGS/05_t1pheVTnoAM_t2socVTnoAM_PGSall_parameters_with_effects.csv", "Condition 5: 05_t1pheVTnoAM_t2socVTnoAM_PGSall"),
+        ("Analysis/BiSEMPGS/06_t1noVTpheAM_t2pheVTpheAM_PGSall_parameters.csv", "Analysis/BiSEMPGS/06_t1noVTpheAM_t2pheVTpheAM_PGSall_parameters_with_effects.csv", "Condition 6: 06_t1noVTpheAM_t2pheVTpheAM_PGSall"),
+        ("Analysis/BiSEMPGS/07_t1noVTsocAM_t2pheVTsocAM_PGSall_parameters.csv", "Analysis/BiSEMPGS/07_t1noVTsocAM_t2pheVTsocAM_PGSall_parameters_with_effects.csv", "Condition 7: 07_t1noVTsocAM_t2pheVTsocAM_PGSall"),
+        ("Analysis/BiSEMPGS/08_t1noVTgenAM_t2pheVTgenAM_PGSall_parameters.csv", "Analysis/BiSEMPGS/08_t1noVTgenAM_t2pheVTgenAM_PGSall_parameters_with_effects.csv", "Condition 8: 08_t1noVTgenAM_t2pheVTgenAM_PGSall")
     ]
     
     processed_files = 0
