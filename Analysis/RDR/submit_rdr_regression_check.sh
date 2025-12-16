@@ -15,11 +15,11 @@
 #SBATCH --time=0-01:00:00      # Reduced time since Python regression is typically faster
 
 # --- Define the array size ---
-#SBATCH --array=1-1%1      # Process 1000 runs with max 25 concurrent jobs
+#SBATCH --array=1-100%20      # Process 1000 runs with max 25 concurrent jobs
 
 #SBATCH --job-name=rdr_regression_analysis
-#SBATCH --output=slurm_logs/rdr_regression_%A_%a.out
-#SBATCH --error=slurm_logs/rdr_regression_%A_%a.err
+#SBATCH --output=slurm_logs/rdr_regression_check%A_%a.out
+#SBATCH --error=slurm_logs/rdr_regression_check%A_%a.err
 
 # --- Start of Job Commands ---
 # The "set -e" command has been removed to ensure the script continues even if one condition fails.
