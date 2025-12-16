@@ -11,8 +11,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4      # Reduced CPUs since Python regression is less parallel than GCTA
-#SBATCH --mem=32G              # Reduced memory requirement for Python regression
-#SBATCH --time=0-01:00:00      # Reduced time since Python regression is typically faster
+#SBATCH --mem=96G              # Increased for GRM calculation with N=32000 (3 matrices of 32k x 32k)
+#SBATCH --time=0-02:00:00      # Increased time buffer for large GRM computation
 
 # --- Define the array size ---
 #SBATCH --array=1-100%20      # Process 1000 runs with max 25 concurrent jobs
