@@ -15,7 +15,7 @@
 #SBATCH --time=0-01:00:00      # Reduced time since Python regression is typically faster
 
 # --- Define the array size ---
-#SBATCH --array=1-1000%25      # Process 1000 runs with max 25 concurrent jobs
+#SBATCH --array=1-100%25      # Process 1000 runs with max 25 concurrent jobs
 
 #SBATCH --job-name=rdr_regression_analysis
 #SBATCH --output=slurm_logs/rdr_regression_%A_%a.out
@@ -45,10 +45,10 @@ CONDITIONS=(
     #"02_t1noVTpheAM_t2noVTnoAM"
     #"03_t1noVTsocAM_t2noVTnoAM"
     #"04_t1noVTgenAM_t2noVTnoAM"
-    "05_t1pheVTnoAM_t2socVTnoAM_PGSall"
+    #"05_t1pheVTnoAM_t2socVTnoAM_PGSall"
     "06_t1noVTpheAM_t2pheVTpheAM_PGSall"
-    "07_t1noVTsocAM_t2pheVTsocAM_PGSall"
-    "08_t1noVTgenAM_t2pheVTgenAM_PGSall"
+    #"07_t1noVTsocAM_t2pheVTsocAM_PGSall"
+    #"08_t1noVTgenAM_t2pheVTgenAM_PGSall"
 )
 
 # --- Loop through each condition ---
